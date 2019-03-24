@@ -1,0 +1,17 @@
+{
+  "name": "testing-easeljs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "babel src/ -d out/debug/",
+    "build": "shx rm -rf out/release/* && babel src/ -d out/release/"
+  },
+  "author": "FireController#1847",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.4.0",
+    "shx": "^0.3.2"
+  }
+}
