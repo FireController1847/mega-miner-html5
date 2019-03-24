@@ -4,14 +4,26 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "babel src/ -d out/debug/",
-    "build": "shx rm -rf out/release/* && babel src/ -d out/release/"
+    "watch:code": "nodemon -x \"npm run build:js\" -w web/js/src/",
+    "watch:browser": "reload -d -s web/html/index.html -w web/js/bundle.js",
+    "build:js": "browserify -t babelify web/js/src/main.js -o web/js/bundle.js",
+    "build:js:old": "babel web/js/src/ -o web/js/bundle.js"
   },
   "author": "FireController#1847",
   "license": "ISC",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "babel-preset-minify": "^0.5.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.2.3",
+    "easeljs": "^1.0.2",
+    "eslint": "^5.15.3",
+    "nodemon": "^1.18.10",
+    "reload": "^2.4.0",
+    "require-globify": "^1.4.1",
     "shx": "^0.3.2"
-  }
+  },
+  "browserslist": "> 0.25%, not dead"
 }
