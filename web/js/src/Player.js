@@ -15,13 +15,13 @@ class Player extends createjs.Shape {
     tick() {
         const speed = 10;
         if (this.stage.keys.down) {
-            if (this.y < this.stage.grid.borders.bottom) this.y += speed;
+            if (this.y < (this.stage.grid.borders.bottom - this.size)) this.y += speed;
         }
         if (this.stage.keys.up) {
             if (this.y > 0) this.y -= speed;
         }
         if (this.stage.keys.right) {
-            if (this.x < this.stage.grid.borders.right) this.x += speed;
+            if (this.x < (this.stage.grid.borders.right - this.size)) this.x += speed;
         }
         if (this.stage.keys.left) {
             if (this.x > 0) this.x -= speed;

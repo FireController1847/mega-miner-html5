@@ -103,6 +103,7 @@
         "rest-spread-spacing": "error",
         "template-curly-spacing": "error",
         "prefer-const": "error",
-        "no-console": "off"
+        "no-console": "off",
+        "no-dupe-class-members": "off"
       }
 }

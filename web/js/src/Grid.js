@@ -1,3 +1,4 @@
+const { Borders } = require("./ShapeUtil.js");
 const Tile = require("./Tile.js");
 
 class Grid {
@@ -13,12 +14,11 @@ class Grid {
         this._height = 40;
 
         // Corners
-        this.borders = {
-            top: 0,
-            left: 0,
-            bottom: (this._height * this._cellSize) - this._cellSize,
-            right: (this._width * this._cellSize) - this._cellSize
-        };
+        this.borders = new Borders(
+            0, 0,
+            this._height * this._cellSize,
+            this._width * this._cellSize
+        );
 
         // The tiles.
         this.tiles = [];
@@ -34,23 +34,23 @@ class Grid {
 
                 if ((Math.round(this._height / 2) == (y + 1)) &&
                     (Math.round(this._width / 2) == (x + 1))) {
-                    tile.place(xPos, yPos, this._cellSize, "red");
+                    tile.place(xPos + this.borders.left, yPos + this.borders.top, this._cellSize, "red");
                 } else if (y % 2 <= 0 && x % 2 <= 0) {
-                    tile.place(xPos, yPos, this._cellSize, "white");
+                    tile.place(xPos + this.borders.left, yPos + this.borders.top, this._cellSize, "white");
                 } else if (y % 2 > 0 && x % 2 <= 0) {
-                    tile.place(xPos, yPos, this._cellSize);
+                    tile.place(xPos + this.borders.left, yPos + this.borders.top, this._cellSize);
                 } else if (y % 2 <= 0 && x % 2 > 0) {
-                    tile.place(xPos, yPos, this._cellSize);
+                    tile.place(xPos + this.borders.left, yPos + this.borders.top, this._cellSize);
                 } else {
-                    tile.place(xPos, yPos, this._cellSize, "white");
+                    tile.place(xPos + this.borders.left, yPos + this.borders.top, this._cellSize, "white");
                 }
 
                 this.stage.addChild(tile);
-                this.stage.update();
                 x++;
             }
             y++;
         }
+        this.stage.update();
     }
 
     get cellSize() {
