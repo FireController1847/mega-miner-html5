@@ -44,6 +44,18 @@ class Grid {
         this.tiles = [];
 
         /**
+         * Whether or not to redraw the grid. **WARNING: REPLACES ALL TILES!**
+         * @type {boolean}
+         */
+        this.redraw = true;
+
+        /**
+         * A list of tiles for the overlay. Gets destroyed when grid is disabled after being enabled.
+         * @type {Array<Tile>}
+         */
+        this.overlayTiles = [];
+
+        /**
          * Whether or not to show the grid overlay. If changed, must ask for a redraw.
          * @example
          *  grid.showGridOverlay = true;
@@ -51,18 +63,12 @@ class Grid {
          * @type {boolean}
          */
         this.showGridOverlay = false;
-
-        /**
-         * Whether or not to redraw the grid.
-         * @type {boolean}
-         */
-        this.redraw = true;
     }
 
     /**
      * Create a bunch of tiles with their repsective pixel-to-grid position.
      */
-    draw() {
+    draw(overlay = false) {
         let gX = 0;
         let gY = 0;
         for (let y = 0; y < this.height * this.tileSize; y += this.tileSize) {
@@ -73,7 +79,7 @@ class Grid {
                 // Determines the center, and then draws a checkerboard by changing the color of the tile.
                 // WARNING: Currently overrides and re-creates every tile! If I want this to be a sprite grid,
                 //          I need to create an entirely separate grid for this!
-                if (this.showGridOverlay) {
+                if (overlay) {
                     if ((Math.round(this.height / 2) == (gY + 1)) &&
                         (Math.round(this.width / 2) == (gX + 1))) {
                         color = "rgba(255, 0, 0, 0.25)";
@@ -88,8 +94,12 @@ class Grid {
                     }
                 }
 
+                if (overlay) {
+                    this.overlayTiles.push(tile);
+                } else {
+                    this.tiles.push(tile);
+                }
                 tile.make(x + this.borders.left, y + this.borders.top, this.tileSize, color);
-                this.tiles.push(tile);
                 this.stage.addChild(tile);
                 gX++;
             }
@@ -100,6 +110,20 @@ class Grid {
     }
 
     /**
+     * Toggles the grid overlay.
+     */
+    toggleOverlay() {
+        if (this.showGridOverlay) {
+            this.showGridOverlay = false;
+            for (let i = 0; i < this.overlayTiles.length; i++) this.stage.removeChild(this.overlayTiles[i]);
+            this.overlayTiles.length = 0;
+        } else {
+            this.showGridOverlay = true;
+            this.draw(true);
+        }
+    }
+
+    /**
      * Calls a tick for this grid (based on the EaselJS Ticker).
      */
     tick() {
@@ -107,7 +131,6 @@ class Grid {
             this.redraw = false;
             for (let i = 0; i < this.tiles.length; i++) this.stage.removeChild(this.tiles[i]);
             this.tiles.length = 0;
-            console.log("GRID REDRAW!");
             this.draw();
         }
     }
