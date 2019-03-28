@@ -1,12 +1,12 @@
 const Stage = require("./Stage.js");
-const Grid = require("./Grid.js");
-const Player = require("./Player.js");
-const Camera = require("./Camera.js");
+const Grid = require("./Grid/Grid.js");
+const Player = require("./Control/Player.js");
+const Camera = require("./Control/Camera.js");
 
 const stage = new Stage("canvas");
 
-const grid = new Grid(stage);
-grid.draw(stage);
+const grid = new Grid(stage, 50, 20, 20);
+stage.grid = grid;
 
 const player = new Player(stage);
 const camera = new Camera(stage);

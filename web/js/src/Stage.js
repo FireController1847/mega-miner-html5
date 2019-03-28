@@ -73,6 +73,7 @@ class Stage extends createjs.Stage {
     tick() {
         if (this.player) this.player.tick();
         if (this.camera) this.camera.tick();
+        if (this.grid) this.grid.tick();
     }
 }
 

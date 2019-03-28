@@ -1,4 +1,4 @@
-const { ShapeUtil, Borders } = require("./ShapeUtil.js");
+const { ShapeUtil, Borders } = require("../ShapeUtil.js");
 
 // Note: Not really a camera. More of a controller that follows the player.
 // Wait, isn't that the defintion of a camera?
