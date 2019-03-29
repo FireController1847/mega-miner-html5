@@ -1,7 +1,8 @@
 const { Borders } = require("../ShapeUtil.js");
 const Tile = require("./Tile.js");
+const ITick = require("../ITick.js");
 
-class Grid {
+class Grid extends ITick {
     /**
      * Contains and manages many shapes in the form of a Grid.
      *
@@ -11,7 +12,13 @@ class Grid {
      * @param {number} height The amount of vertical tiles to create.
      */
     constructor(stage, tileSize, width, height) {
+        super();
         this.stage = stage;
+
+        /**
+         * The type of tile constructor to use.
+         */
+        this.Tile = Tile;
 
         /**
          * The size of each tile.

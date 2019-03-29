@@ -10,7 +10,7 @@ class Tile extends createjs.Shape {
         super(...args);
 
         this.gX = gX;
-        this.gX = gY;
+        this.gY = gY;
     }
 
     /**

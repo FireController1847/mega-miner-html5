@@ -1,20 +1,33 @@
 const Stage = require("./Stage.js");
-const Grid = require("./Grid/Grid.js");
+const Grid = require("./Graphics/Grid.js");
 const Player = require("./Control/Player.js");
 const Camera = require("./Control/Camera.js");
+const Map = require("./Graphics/Map.js");
 
 const stage = new Stage("canvas");
 
-const grid = new Grid(stage, 50, 20, 20);
-stage.grid = grid;
+// Main Function
+const Loader = require("./Loader.js");
+const loader = new Loader();
+stage.loader = loader;
+loader.load(() => {
+    const grid = new Grid(stage, 50, 40, 40);
+    grid.toggleOverlay();
+    stage.grid = grid;
 
-const player = new Player(stage);
-const camera = new Camera(stage);
+    const player = new Player(stage);
+    const camera = new Camera(stage);
 
-window.stage = stage;
-window.grid = grid;
-window.player = player;
-window.camera = camera;
+    const map = new Map(stage);
+    map.test();
+
+    window.stage = stage;
+    window.grid = grid;
+    window.player = player;
+    window.camera = camera;
+    window.loader = loader;
+    window.map = map;
+});
 
 /*
 const tileSize = 50;
