@@ -2,6 +2,7 @@
 const shim = require("shim-keyboard-event-key"); // eslint-disable-line
 // Requirements
 const InputHandler = require("./InputHandler.js");
+const SpriteHandler = require("./SpriteHandler.js");
 
 class Game extends createjs.Stage {
     constructor() {
@@ -36,6 +37,7 @@ class Game extends createjs.Stage {
      */
     init() {
         this.inputHandler = new InputHandler(this);
+        this.spriteHandler = new SpriteHandler(this);
         createjs.Ticker.addEventListener("tick", this);
         createjs.Ticker.framerate = this.framerate;
         this.resize();
