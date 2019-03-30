@@ -26,7 +26,7 @@ class SpriteHandler {
     init() {
         /** TEST SPRITE */
         this.sprite = new Sprite(this);
-        this.sprite.drawImageRect(this.game.img, 0, 100, this.grid.borders.right, this.grid.borders.bottom);
+        this.sprite.drawImageRect(this.game.img, 0, 8 * this.grid.tileSize, this.grid.borders.right, this.grid.borders.bottom);
         this.game.addChild(this.sprite);
         this.game.update();
 
