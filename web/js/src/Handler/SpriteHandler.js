@@ -1,12 +1,12 @@
-const Grid = require("./Grid/Grid.js");
-const Player = require("./Player.js");
+const Grid = require("../Grid/Grid.js");
+const Player = require("../Player.js");
 
 /**
  * Manages and handles all sprites on the screen.
  */
 class SpriteHandler {
     /**
-     * @param {import("./Game.js")} game The game.
+     * @param {import("../Game.js")} game The game.
      */
     constructor(game) {
         this.game = game;

@@ -47,16 +47,6 @@ class Player extends createjs.Shape {
             if (this.x > 0) this.x -= this.speed;
             if (this.x < this.game.spriteHandler.grid.borders.left) this.x = this.game.spriteHandler.grid.borders.left;
         }
-        /*
-        if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0) {
-            if (this.y < (this.game.spriteHandler.grid.borders.bottom - this.size)) this.y += this.speed;
-            if (this.y > (this.game.spriteHandler.grid.borders.bottom - this.size)) this.y = this.game.spriteHandler.grid.borders.bottom - this.size;
-        }
-        if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0) {
-            if (this.y < (this.game.spriteHandler.grid.borders.bottom - this.size)) this.y += this.speed;
-            if (this.y > (this.game.spriteHandler.grid.borders.bottom - this.size)) this.y = this.game.spriteHandler.grid.borders.bottom - this.size;
-        }
-        */
     }
 }
 

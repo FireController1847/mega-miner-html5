@@ -1,8 +1,8 @@
 // Shim is required for IE & Edge support.
 const shim = require("shim-keyboard-event-key"); // eslint-disable-line
 // Requirements
-const InputHandler = require("./InputHandler.js");
-const SpriteHandler = require("./SpriteHandler.js");
+const InputHandler = require("./Handler/InputHandler.js");
+const SpriteHandler = require("./Handler/SpriteHandler.js");
 
 class Game extends createjs.Stage {
     constructor() {

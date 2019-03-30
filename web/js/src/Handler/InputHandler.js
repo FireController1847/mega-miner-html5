@@ -3,7 +3,7 @@
  */
 class InputHandler {
     /**
-     * @param {import("./Game.js")} game The game
+     * @param {import("../Game.js")} game The game
      */
     constructor(game) {
         this.game = game;
