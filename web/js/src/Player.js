@@ -54,6 +54,14 @@ class Player extends createjs.Shape {
             if (this.x < this.game.spriteHandler.grid.borders.left) this.x = this.game.spriteHandler.grid.borders.left;
         }
     }
+
+    get xCenter() {
+        return this.x + (this.size / 2);
+    }
+
+    get yCenter() {
+        return this.y + (this.size / 2);
+    }
 }
 
 module.exports = Player;
