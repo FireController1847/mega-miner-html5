@@ -38,6 +38,7 @@ class Game extends createjs.Stage {
     init() {
         this.inputHandler = new InputHandler(this);
         this.spriteHandler = new SpriteHandler(this);
+        this.spriteHandler.init();
         createjs.Ticker.addEventListener("tick", this);
         createjs.Ticker.framerate = this.framerate;
         this.resize();
