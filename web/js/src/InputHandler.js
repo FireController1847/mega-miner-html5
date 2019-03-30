@@ -17,6 +17,7 @@ class InputHandler {
         window.addEventListener("keydown", this.keydown.bind(this));
         window.addEventListener("keyup", this.keyup.bind(this));
         window.addEventListener("keypress", this.keypress.bind(this));
+        createjs.Ticker.addEventListener("tick", this.tick.bind(this));
     }
 
     /**
@@ -46,6 +47,13 @@ class InputHandler {
      */
     keypress() {
         // ...
+    }
+
+    /**
+     * Handles when the document goes in and out of fovus.
+     */
+    tick() {
+        if (!document.hasFocus() && this.pressedKeys.length > 0) this.pressedKeys.length = 0;
     }
 }
 
