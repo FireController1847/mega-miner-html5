@@ -12,6 +12,18 @@ class Camera {
         this.game = game;
 
         /**
+         * A reference to the player for utility purposes.
+         * @type {import("./Player.js")}
+         */
+        this.player = this.game.spriteHandler.player;
+
+        /**
+         * A reference to the sprite grid for utility purposes.
+         * @type {import("./Grid/Grid.js")}
+         */
+        this.grid = this.game.spriteHandler.grid;
+
+        /**
          * The borders of the viewport for this camera.
          * @type {Borders}
          */
@@ -27,18 +39,6 @@ class Camera {
          * @type {boolean}
          */
         this.tickEnabled = true;
-
-        /**
-         * A reference to the player for utility purposes.
-         * @type {import("./Player.js")}
-         */
-        this.player = this.game.spriteHandler.player;
-
-        /**
-         * A reference to the sprite grid for utility purposes.
-         * @type {import("./Grid/Grid.js")}
-         */
-        this.grid = this.game.spriteHandler.grid;
 
         createjs.Ticker.addEventListener("tick", this.tick.bind(this));
     }
