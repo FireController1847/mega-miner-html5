@@ -13,7 +13,6 @@ class Grid {
      */
     constructor(game, tileSize, width, height) {
         this.game = game;
-        createjs.Ticker.addEventListener("tick", this.tick.bind(this));
 
         /**
          * The size of each tile in pixels.
@@ -65,6 +64,14 @@ class Grid {
          * @type {boolean}
          */
         this.showGridOverlay = false;
+
+        /**
+         * Whether or not to run the tick event.
+         * @type {boolean}
+         */
+        this.tickEnabled = true;
+
+        createjs.Ticker.addEventListener("tick", this.tick.bind(this));
     }
 
     /**
@@ -127,6 +134,7 @@ class Grid {
      * Calls a tick for this grid (based on the EaselJS Ticker).
      */
     tick() {
+        if (!this.tickEnabled) return;
         if (this.recreate) {
             this.recreate = false;
             for (let i = 0; i < this.tiles.length; i++) this.game.removeChild(this.tiles[i]);

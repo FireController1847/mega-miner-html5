@@ -9,7 +9,6 @@ class Player extends createjs.Shape {
     constructor(game, ...args) {
         super(...args);
         this.game = game;
-        createjs.Ticker.addEventListener("tick", this.tick.bind(this));
 
         /**
          * The size of this player in pixels.
@@ -24,10 +23,17 @@ class Player extends createjs.Shape {
          */
         this.speed = 10;
 
+        /**
+         * Whether or not to run the tick event.
+         * @type {boolean}
+         */
+        this.tickEnabled = true;
+
         // Create the player for temporary testing \\
         this.graphics.beginFill("blue").drawRect(0, 0, this.size, this.size);
         this.game.addChild(this);
         this.game.update();
+        createjs.Ticker.addEventListener("tick", this.tick.bind(this));
     }
 
     tick() {

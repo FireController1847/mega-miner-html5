@@ -14,6 +14,12 @@ class InputHandler {
          */
         this.pressedKeys = [];
 
+        /**
+         * Whether or not to run the tick event.
+         * @type {boolean}
+         */
+        this.tickEnabled = true;
+
         window.addEventListener("keydown", this.keydown.bind(this));
         window.addEventListener("keyup", this.keyup.bind(this));
         window.addEventListener("keypress", this.keypress.bind(this));
@@ -49,10 +55,8 @@ class InputHandler {
         // ...
     }
 
-    /**
-     * Handles when the document goes in and out of fovus.
-     */
     tick() {
+        if (!this.tickEnabled) return;
         if (!document.hasFocus() && this.pressedKeys.length > 0) this.pressedKeys.length = 0;
     }
 }
