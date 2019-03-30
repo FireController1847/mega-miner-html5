@@ -64,19 +64,19 @@ class Player extends createjs.Shape {
 
     tick() {
         if (!this.moving) {
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0) {
+            if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
                 if (this.pos.y < (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y += this.grid.tileSize;
                 if (this.pos.y > (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y = this.grid.borders.bottom - this.grid.tileSize;
             }
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0) {
+            if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
                 if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
                 if (this.pos.y < this.map.horizonLine - this.grid.tileSize) this.pos.y = this.map.horizonLine - this.grid.tileSize;
             }
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0) {
+            if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
                 if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
                 if (this.pos.x > (this.grid.borders.right - this.grid.tileSize)) this.pos.x = this.grid.borders.right - this.grid.tileSize;
             }
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0) {
+            if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0 || this.game.inputHandler.pressedKeys.indexOf("a") >= 0) {
                 if (this.pos.x > 0) this.pos.x -= this.grid.tileSize;
                 if (this.pos.x < this.grid.borders.left) this.x = this.grid.borders.left;
             }
