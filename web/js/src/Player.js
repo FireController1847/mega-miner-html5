@@ -47,12 +47,6 @@ class Player extends createjs.Shape {
          */
         this.grid = this.game.spriteHandler.grid;
 
-        /**
-         * Determines the point where the horizon is (when to stop allowing the player to go up).
-         * @type {number}
-         */
-        this.horizon = 8 * this.grid.tileSize;
-
         // Create the player for temporary testing \\
         this.graphics.beginFill("blue").drawRect(0, 0, this.size, this.size);
         this.game.addChild(this);
@@ -68,7 +62,7 @@ class Player extends createjs.Shape {
             }
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0) {
                 if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
-                if (this.pos.y < this.horizon - this.grid.tileSize) this.pos.y = this.horizon - this.grid.tileSize;
+                if (this.pos.y < this.game.spriteHandler.map.horizonLine - this.grid.tileSize) this.pos.y = this.game.spriteHandler.map.horizonLine - this.grid.tileSize;
             }
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0) {
                 if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
