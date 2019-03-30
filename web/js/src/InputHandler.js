@@ -1,4 +1,10 @@
+/**
+ * Handles any user input such as keyboard events, mouse events, and more.
+ */
 class InputHandler {
+    /**
+     * @param {import("./Game.js")} game The game
+     */
     constructor(game) {
         this.game = game;
 
@@ -19,7 +25,6 @@ class InputHandler {
      */
     keydown(e) {
         if (this.pressedKeys.indexOf(e.key) < 0) this.pressedKeys.push(e.key);
-        console.log(this.pressedKeys);
     }
 
     /**
@@ -33,7 +38,6 @@ class InputHandler {
                 return false;
             });
         }
-        console.log(this.pressedKeys);
     }
 
     /**
