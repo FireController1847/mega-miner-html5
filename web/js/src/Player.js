@@ -26,6 +26,7 @@ class Player extends createjs.Shape {
          * The speed at which this player will move at.
          * Currently calculated by pixels per frame.
          * TODO: Make a real life value other than pixels per frame.
+         * @type {number}
          */
         this.speed = 5;
 
@@ -37,8 +38,15 @@ class Player extends createjs.Shape {
 
         /**
          * Whether or not the character is currently moving from one tile to the next.
+         * @type {boolean}
          */
         this.moving = false;
+
+        /**
+         * Set the initial position for the player.
+         */
+        this.x = Math.round((this.grid.width * this.grid.tileSize) / 2);
+        this.y = this.map.horizonLine - this.grid.tileSize;
 
         /**
          * The pixel position of the player before actual movement.
@@ -86,11 +94,11 @@ class Player extends createjs.Shape {
     }
 
     get xCenter() {
-        return this.x + (this.size / 2);
+        return this.x + (this.grid.tileSize / 2);
     }
 
     get yCenter() {
-        return this.y + (this.size / 2);
+        return this.y + (this.grid.tileSize / 2);
     }
 }
 
