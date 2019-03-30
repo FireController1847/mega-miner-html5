@@ -131,6 +131,15 @@ class Grid {
     }
 
     /**
+     * Brings the overlay to the front of the screen. Used for relayering.
+     */
+    bringOverlayToFront() {
+        for (let i = 0; i < this.overlayTiles.length; i++) {
+            this.game.setChildIndex(this.overlayTiles[i], this.game.children.length - 1);
+        }
+    }
+
+    /**
      * Calls a tick for this grid (based on the EaselJS Ticker).
      */
     tick() {
