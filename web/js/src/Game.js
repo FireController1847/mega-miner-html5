@@ -39,9 +39,11 @@ class Game extends createjs.Stage {
         this.inputHandler = new InputHandler(this);
         this.spriteHandler = new SpriteHandler(this);
         // TEMPORARY SPRITE TEST
-        this.img = new Image();
-        this.img.onload = this.spriteHandler.init.bind(this.spriteHandler);
-        this.img.src = "web/images/nightmare.png";
+        this.images = {
+            img: new Image()
+        };
+        this.images.img.onload = this.spriteHandler.init.bind(this.spriteHandler);
+        this.images.img.src = "web/images/grass.png";
         // END TEMPORARY SPRITE TEST
         createjs.Ticker.addEventListener("tick", this);
         createjs.Ticker.framerate = this.framerate;

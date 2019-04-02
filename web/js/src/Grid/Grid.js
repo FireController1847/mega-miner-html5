@@ -105,6 +105,7 @@ class Grid {
                     this.game.addChild(tile);
                     this.overlayTiles.push(tile);
                 } else {
+                    // TODO: Is it nessecary to even do this or can we just keep this class without creating these "mathematical tiles"?
                     const tile = new Tile(gX, gY);
                     this.tiles.push(tile);
                 }

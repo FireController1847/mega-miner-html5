@@ -1,7 +1,7 @@
 const Grid = require("../Grid/Grid.js");
 const Player = require("../Player.js");
 const Camera = require("../Camera.js");
-const Map = require("../Map.js");
+const GameMap = require("../Map/Map.js");
 
 /**
  * Manages and handles all sprites on the screen.
@@ -24,7 +24,7 @@ class SpriteHandler {
     }
 
     init() {
-        this.map = new Map(this.game);
+        this.map = new GameMap(this.game);
         this.map.generate();
 
         this.player = new Player(this.game);
