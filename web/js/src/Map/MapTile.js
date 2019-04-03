@@ -12,7 +12,7 @@ class MapTile extends createjs.Bitmap {
      * @param {MapTileProperties} properties Contains the properties of this maptile.
      */
     constructor(map, tile, appearance, properties) {
-        super(map.game.displayHandler);
+        super();
 
         /**
          * The map that created this tile.
@@ -41,16 +41,18 @@ class MapTile extends createjs.Bitmap {
         this.appearance = appearance;
     }
 
+    /**
+     * Creates this maptile to be ready to be displayed.
+     */
     make() {
-        // TODO: Make more versatile.
         const sprite = this.map.game.loadingHandler.sprites[this.appearance];
         this.image = sprite.image;
-        this.scaleX = 50 / 64;
-        this.scaleY = 50 / 64;
-        this.x = this.tile.gX * this.map.grid.tileSize;
-        this.y = this.tile.gY * this.map.grid.tileSize;
-        // this.drawImageRect(this.map.game.images[this.appearance], this.tile.gX * this.map.grid.tileSize, this.tile.gY * this.map.grid.tileSize, 50, 50);
-        // this.graphics.beginBitmapFill(image).drawRect(x, y, width, height);
+        this.setTransform(
+            this.tile.gX * this.map.grid.tileSize,
+            this.tile.gY * this.map.grid.tileSize,
+            this.map.grid.tileSize / this.image.width,
+            this.map.grid.tileSize / this.image.height
+        );
     }
 }
 /**

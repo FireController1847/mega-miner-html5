@@ -6,9 +6,22 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="web/css/reset.css">
+    <style>
+        body {
+            overflow: hidden; background-color: #ff9900;
+        }
+        canvas {
+            background-color: #0099ff;
+            image-rendering: optimizeSpeed;             /* Older versions of FF          */
+            image-rendering: -moz-crisp-edges;          /* FF 6.0+                       */
+            image-rendering: -webkit-optimize-contrast; /* Safari                        */
+            image-rendering: -o-crisp-edges;            /* OS X & Windows Opera (12.02+) */
+            image-rendering: pixelated;                 /* Awesome future-browsers       */
+            -ms-interpolation-mode: nearest-neighbor;   /* IE                            */
+        }
+    </style>
 </head>
 <body>
-    <style>body { overflow: hidden; background-color: #ff9900; } canvas { background-color: #0099ff; }</style>
     <canvas id="canvas"></canvas>
     <script src="node_modules/easeljs/lib/easeljs.min.js"></script>
     <script src="node_modules/preloadjs/lib/preloadjs.min.js"></script>
