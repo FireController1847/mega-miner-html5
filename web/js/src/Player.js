@@ -70,6 +70,19 @@ class Player extends createjs.Shape {
          */
         this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
 
+        /**
+         * The amount of ticks required before the player can enter a maptile.
+         * Creates a sort of "push force" feeling.
+         * @type {number}
+         */
+        this.chargeReq = 10;
+
+        /**
+         * How many more ticks we're waiting for before it mines.
+         * @type {number}
+         */
+        this.charge = 0;
+
         // Create the player for temporary testing \\
         this.graphics.beginFill("blue").drawRect(0, 0, this.grid.tileSize, this.grid.tileSize);
         this.game.addChild(this);
@@ -82,28 +95,37 @@ class Player extends createjs.Shape {
             let maptile = this.map.tiles[this.tile.toString()];
             if (!maptile && this.speed != this.defaultSpeed) this.speed = this.defaultSpeed;
 
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
-                if (this.pos.y < (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y += this.grid.tileSize;
-                if (this.pos.y > (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y = this.grid.borders.bottom - this.grid.tileSize;
-                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
-            }
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
-                if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
-                if (this.pos.y < this.map.horizonLine - this.grid.tileSize) this.pos.y = this.map.horizonLine - this.grid.tileSize;
-                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
-            }
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
-                if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
-                if (this.pos.x > (this.grid.borders.right - this.grid.tileSize)) this.pos.x = this.grid.borders.right - this.grid.tileSize;
-                maptile = this.map.tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
-            }
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0 || this.game.inputHandler.pressedKeys.indexOf("a") >= 0) {
-                if (this.pos.x > 0) this.pos.x -= this.grid.tileSize;
-                if (this.pos.x < this.grid.borders.left) this.x = this.grid.borders.left;
                 maptile = this.map.tiles[new Tile(this.tile.gX - 1, this.tile.gY).toString()];
+                this.kpCharge(maptile, () => {
+                    if (this.pos.x > 0) this.pos.x -= this.grid.tileSize;
+                    if (this.pos.x < this.grid.borders.left) this.x = this.grid.borders.left;
+                });
+            } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
+                maptile = this.map.tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
+                this.kpCharge(maptile, () => {
+                    if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
+                    if (this.pos.x > (this.grid.borders.right - this.grid.tileSize)) this.pos.x = this.grid.borders.right - this.grid.tileSize;
+                });
+            } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
+                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
+                this.kpCharge(maptile, () => {
+                    if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
+                    if (this.pos.y < this.map.horizonLine - this.grid.tileSize) this.pos.y = this.map.horizonLine - this.grid.tileSize;
+                });
+            } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
+                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
+                this.kpCharge(maptile, () => {
+                    if (this.pos.y < (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y += this.grid.tileSize;
+                    if (this.pos.y > (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y = this.grid.borders.bottom - this.grid.tileSize;
+                });
+            } else if (this.charge > 0) {
+                this.pos.y = this.y;
+                this.pos.x = this.x;
+                this.charge = 0;
             }
             if (maptile) this.speed = maptile.properties.thickness;
-            if (this.pos.y != this.y || this.pos.x != this.x) this.moving = true;
+            if ((this.pos.y != this.y || this.pos.x != this.x) && (!maptile || this.charge >= this.chargeReq)) this.moving = true;
         } else {
             if (this.pos.x != this.x) {
                 if (this.x < this.pos.x) this.x += this.speed;
@@ -114,9 +136,27 @@ class Player extends createjs.Shape {
             }
             if (this.y == this.pos.y && this.x == this.pos.x) {
                 this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
+                const maptile = this.map.tiles[this.tile.toString()];
+                if (maptile) {
+                    this.game.removeChild(maptile);
+                    delete this.map.tiles[this.tile.toString()];
+                }
                 this.moving = false;
             }
         }
+    }
+
+    /**
+     * Handles "charging" the player up to mine a tile on every keypress.
+     *
+     * @param {MapTile} maptile The maptile.
+     * @param {CallableFunction} logic The logic for this keypress.
+     */
+    kpCharge(maptile, logic) {
+        if (!maptile || this.charge <= 0 || this.charge > this.chargeReq) {
+            logic();
+        }
+        if (this.charge <= this.chargeReq) this.charge++;
     }
 
     /**

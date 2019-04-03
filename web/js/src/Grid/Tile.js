@@ -21,7 +21,7 @@ class Tile {
     }
 
     toString() {
-        return `${this.gX}${this.gY}`;
+        return `${this.gX}-${this.gY}`;
     }
 }
 
