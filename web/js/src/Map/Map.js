@@ -1,3 +1,4 @@
+/** @typedef {import("./MapTile.js")} MapTile */
 const Tile = require("../Grid/Tile.js");
 const MapTile = require("./MapTile.js"); // eslint-disable-line
 const Grass = require("./Tiles/Grass.js");
@@ -77,7 +78,7 @@ class GameMap {
      * Re-positions the elements within the map to ensure they're in the right order.
      */
     relayer() {
-        
+        // ...
     }
 }
 
