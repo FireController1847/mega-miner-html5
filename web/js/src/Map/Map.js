@@ -51,7 +51,7 @@ class GameMap {
         // Generate First Grass Layer
         for (let i = 0; i < this.grid.width; i++) {
             const t = new Tile(i, this.horizonLineGU);
-            const mt = new MapTile(this, t, "img", {});
+            const mt = new MapTile(this, t, "grass", {});
             mt.make();
             this.game.addChild(mt);
             this.tiles.set(t, mt);

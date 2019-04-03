@@ -43,8 +43,8 @@ class MapTile extends createjs.Bitmap {
 
     make() {
         // TODO: Make more versatile.
-        const img = this.map.game.images[this.appearance];
-        this.image = img;
+        const sprite = this.map.game.loadingHandler.sprites[this.appearance];
+        this.image = sprite.image;
         this.scaleX = 50 / 64;
         this.scaleY = 50 / 64;
         this.x = this.tile.gX * this.map.grid.tileSize;
