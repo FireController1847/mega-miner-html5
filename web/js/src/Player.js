@@ -1,3 +1,6 @@
+/** @typedef {import("./Map/MapTile.js")} MapTile */
+const Tile = require("./Grid/Tile.js");
+
 /**
  * The player -- the object that the player controls.
  */
@@ -18,9 +21,15 @@ class Player extends createjs.Shape {
 
         /**
          * A reference to the map for utility purposes.
-         * @type {import("./Map.js")}
+         * @type {import("./Map/Map.js")}
          */
         this.map = this.game.displayHandler.map;
+
+        /**
+         * The speed at which the player will move at by default.
+         * @type {number}
+         */
+        this.defaultSpeed = 6.25;
 
         /**
          * The speed at which this player will move at.
@@ -55,6 +64,12 @@ class Player extends createjs.Shape {
          */
         this.pos = { x: this.x, y: this.y };
 
+        /**
+         * The grid position of the player after actual movement.
+         * @type {Tile}
+         */
+        this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
+
         // Create the player for temporary testing \\
         this.graphics.beginFill("blue").drawRect(0, 0, this.grid.tileSize, this.grid.tileSize);
         this.game.addChild(this);
@@ -64,22 +79,30 @@ class Player extends createjs.Shape {
 
     tick() {
         if (!this.moving) {
+            let maptile = this.map.tiles[this.tile.toString()];
+            if (!maptile && this.speed != this.defaultSpeed) this.speed = this.defaultSpeed;
+
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
                 if (this.pos.y < (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y += this.grid.tileSize;
                 if (this.pos.y > (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y = this.grid.borders.bottom - this.grid.tileSize;
+                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
             }
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
                 if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
                 if (this.pos.y < this.map.horizonLine - this.grid.tileSize) this.pos.y = this.map.horizonLine - this.grid.tileSize;
+                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
             }
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
                 if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
                 if (this.pos.x > (this.grid.borders.right - this.grid.tileSize)) this.pos.x = this.grid.borders.right - this.grid.tileSize;
+                maptile = this.map.tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
             }
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0 || this.game.inputHandler.pressedKeys.indexOf("a") >= 0) {
                 if (this.pos.x > 0) this.pos.x -= this.grid.tileSize;
                 if (this.pos.x < this.grid.borders.left) this.x = this.grid.borders.left;
+                maptile = this.map.tiles[new Tile(this.tile.gX - 1, this.tile.gY).toString()];
             }
+            if (maptile) this.speed = maptile.properties.thickness;
             if (this.pos.y != this.y || this.pos.x != this.x) this.moving = true;
         } else {
             if (this.pos.x != this.x) {
@@ -89,8 +112,19 @@ class Player extends createjs.Shape {
                 if (this.y < this.pos.y) this.y += this.speed;
                 if (this.y > this.pos.y) this.y -= this.speed;
             }
-            if (this.y == this.pos.y && this.x == this.pos.x) this.moving = false;
+            if (this.y == this.pos.y && this.x == this.pos.x) {
+                this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
+                this.moving = false;
+            }
         }
+    }
+
+    /**
+     * Gets the MapTile that is below the player by 1 GU.
+     * @returns {MapTile}
+     */
+    getTileBelow() {
+        this.map.tiles.get();
     }
 
     get xCenter() {

@@ -9,7 +9,7 @@ class MapTile extends createjs.Bitmap {
      * @param {Map} map The map that created this tile.
      * @param {Tile} tile Contains information about this maptile's position on the grid.
      * @param {string} appearance Contains the image id used to determine this maptile's appearance.
-     * @param {Object.<String, any>} properties Contains the properties of this maptile.
+     * @param {MapTileProperties} properties Contains the properties of this maptile.
      */
     constructor(map, tile, appearance, properties) {
         super(map.game.displayHandler);
@@ -30,7 +30,7 @@ class MapTile extends createjs.Bitmap {
         /**
          * Contains the properties of this maptile.
          * Used by the player and game to determine how to react to this tile.
-         * @type {Object.<String, any>}
+         * @type {MapTileProperties}
          */
         this.properties = properties;
 
@@ -53,5 +53,21 @@ class MapTile extends createjs.Bitmap {
         // this.graphics.beginBitmapFill(image).drawRect(x, y, width, height);
     }
 }
+/**
+ * Determines the different tile types.
+ * @readonly
+ * @enum {number}
+ */
+MapTile.Types = {
+    DIRT: 0
+};
+
+/**
+ * Contains information about the tile such as thickness, value, and more.
+ * @typedef {Object} MapTileProperties
+ * @property {MapTile.Types} type The type of tile this is.
+ * @property {number} tickness Determines the speed at which the player moves in this tile (in pixels per frame).
+ * @property {number} value The value of this tile.
+ */
 
 module.exports = MapTile;

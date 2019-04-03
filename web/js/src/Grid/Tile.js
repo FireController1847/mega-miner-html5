@@ -7,8 +7,21 @@ class Tile {
      * @param {number} gY The tile's y position relative to a grid.
      */
     constructor(gX, gY) {
+        /**
+         * This tile's x position relative to a grid.
+         * @type {number}
+         */
         this.gX = gX;
+
+        /**
+         * This tile's y position relative to a grid.
+         * @type {number}
+         */
         this.gY = gY;
+    }
+
+    toString() {
+        return `${this.gX}${this.gY}`;
     }
 }
 

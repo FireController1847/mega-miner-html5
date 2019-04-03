@@ -116,6 +116,17 @@ class Grid {
     }
 
     /**
+     * Returns the tile position on the grid from the pixel position.
+     *
+     * @param {number} x The horizontal pixel position
+     * @param {number} y The vertical pixel position
+     * @returns {Tile}
+     */
+    getTilePositionFromPixelPosition(x, y) {
+        return new Tile(x / this.tileSize, y / this.tileSize);
+    }
+
+    /**
      * Toggles the grid overlay.
      */
     toggleOverlay() {

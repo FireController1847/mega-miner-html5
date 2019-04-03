@@ -1,5 +1,7 @@
 const Tile = require("../Grid/Tile.js");
-const MapTile = require("./MapTile.js");
+const MapTile = require("./MapTile.js"); // eslint-disable-line
+const Grass = require("./Tiles/Grass.js");
+const Dirt = require("./Tiles/Dirt.js");
 
 /**
  * Handles and creates all tiles relating to the map itself. Also handles map generation among various other map-related things.
@@ -39,9 +41,9 @@ class GameMap {
 
         /**
          * A list of tiles used in the foreground (supposedly the same layer as the player).
-         * @type {Map<Tile, MapTile>}
+         * @type {Object.<string, MapTile>}
          */
-        this.tiles = new Map();
+        this.tiles = {};
     }
 
     /**
@@ -51,10 +53,21 @@ class GameMap {
         // Generate First Grass Layer
         for (let i = 0; i < this.grid.width; i++) {
             const t = new Tile(i, this.horizonLineGU);
-            const mt = new MapTile(this, t, "grass", {});
+            const mt = new Grass(this, t);
             mt.make();
             this.game.addChild(mt);
-            this.tiles.set(t, mt);
+            this.tiles[t.toString()] = mt;
+        }
+
+        // Generate Dirt
+        for (let gY = this.horizonLineGU + 1; gY < this.grid.height; gY++) {
+            for (let gX = 0; gX < this.grid.width; gX++) {
+                const t = new Tile(gX, gY);
+                const mt = new Dirt(this, t);
+                mt.make();
+                this.game.addChild(mt);
+                this.tiles[t.toString()] = mt;
+            }
         }
 
         this.game.update();
