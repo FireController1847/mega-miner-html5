@@ -1,22 +1,43 @@
 /** @typedef {import("../Grid/Tile.js")} Tile */
 /** @typedef {import("./Map.js")} Map */
-const Sprite = require("../Sprite.js");
 
 /**
- * Used mostly for the player to determine if the tile is breakable and other properties of said tile.
+ * Used for the player and game to determine if the tile is breakable, where it should be placed, and how the game should react to it.
  */
 class MapTile extends createjs.Bitmap {
     /**
      * @param {Map} map The map that created this tile.
-     * @param {Tile} tile Contains information about this MapTile's position.
-     * @param {string} appearance Determines what the tile will look like when drawn on the map.
-     * @param {Object} properties Contains properties about this MapTile.
+     * @param {Tile} tile Contains information about this maptile's position on the grid.
+     * @param {string} appearance Contains the image id used to determine this maptile's appearance.
+     * @param {Object.<String, any>} properties Contains the properties of this maptile.
      */
     constructor(map, tile, appearance, properties) {
         super(map.game.spriteHandler);
+
+        /**
+         * The map that created this tile.
+         * Contains a reference to the game.
+         * @type {Map}
+         */
         this.map = map;
+
+        /**
+         * Contains information about this maptile's position on the grid.
+         * @type {Tile}
+         */
         this.tile = tile;
+
+        /**
+         * Contains the properties of this maptile.
+         * Used by the player and game to determine how to react to this tile.
+         * @type {Object.<String, any>}
+         */
         this.properties = properties;
+
+        /**
+         * Contains the image id used to determine this maptile's appearance.
+         * @type {string}
+         */
         this.appearance = appearance;
     }
 

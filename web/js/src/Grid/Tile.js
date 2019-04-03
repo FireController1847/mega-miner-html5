@@ -1,5 +1,5 @@
 /**
- * A mathematical square that contains the position of itself on a generated grid.
+ * A mathematical shape that contains the position of itself on a generated grid.
  */
 class Tile {
     /**

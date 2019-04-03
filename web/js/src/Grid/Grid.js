@@ -7,7 +7,7 @@ const Tile = require("./Tile.js");
 class Grid {
     /**
      * @param {import("../Game.js")} game The game
-     * @param {number} tileSize The size of each tile in pixels. (can only be squares).
+     * @param {number} tileSize The size of each tile in pixels.
      * @param {number} width The amount of horizontal tiles to create.
      * @param {number} height The amount of vertical tiles to create.
      */
@@ -51,16 +51,14 @@ class Grid {
         this.recreate = true;
 
         /**
-         * A list of tiles for the overlay. Gets destroyed when grid is disabled after being enabled.
+         * A list of tiles for the overlay. Gets destroyed when grid overlayed is disabled.
          * @type {Array<Tile>}
          */
         this.overlayTiles = [];
 
         /**
-         * Whether or not to show the grid overlay. If changed, must ask for a redraw.
-         * @example
-         *  grid.showGridOverlay = true;
-         *  grid.redraw = true;
+         * Whether or not to show the grid overlay.
+         * Should not be changed manually. Use `Grid#toggleOverlay` instead.
          * @type {boolean}
          */
         this.showGridOverlay = false;

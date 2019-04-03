@@ -1,10 +1,8 @@
 const Tile = require("../Grid/Tile.js");
 const MapTile = require("./MapTile.js");
-const Sprite = require("../Sprite.js");
 
 /**
- * Handles and creates all tiles relating to the map itself.
- * Also handles map generation.
+ * Handles and creates all tiles relating to the map itself. Also handles map generation among various other map-related things.
  */
 class GameMap {
     /**
@@ -21,23 +19,26 @@ class GameMap {
 
         /**
          * Determines the maximum position vertically that the tiles will be generated (in grid units).
+         * @type {number}
          */
         this.horizonLineGU = 8;
 
         /**
-         * Determines the maximum position vertically that tiles will be generated.
+         * Determines the maximum position vertically that tiles will be generated (in pixels).
          * @type {number}
          */
         this.horizonLine = this.horizonLineGU * this.grid.tileSize;
 
         /**
          * A list of tiles used in the background.
+         * TODO: Determine if needed. Might not be needed if we can fill a shape with the bitmap
+         *  instead of creating individual tiles for the background, as they're never interacted with.
          * @type {Map<Tile, MapTile>}
          */
         this.bg_tiles = new Map();
 
         /**
-         * A list of tiles used in the foreground (where the player is).
+         * A list of tiles used in the foreground (supposedly the same layer as the player).
          * @type {Map<Tile, MapTile>}
          */
         this.tiles = new Map();
