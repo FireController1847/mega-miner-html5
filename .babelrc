@@ -1,4 +1,4 @@
 {
-    "presets": ["@babel/preset-env", ["minify", { "builtIns": false }]],
+    "presets": ["@babel/preset-env"],
     "comments": false
 }
