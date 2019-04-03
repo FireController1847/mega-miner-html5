@@ -1,3 +1,4 @@
+// TODO: Determine if this is actually needed.
 class Sprite extends createjs.Shape {
     /**
      * @param {import("./Handler/SpriteHandler.js")} spriteHandler The sprite handler
