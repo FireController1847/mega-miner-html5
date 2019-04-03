@@ -6,7 +6,7 @@ const GameMap = require("../Map/Map.js");
 /**
  * Manages and handles all sprites on the screen.
  */
-class SpriteHandler {
+class DisplayHandler {
     /**
      * @param {import("../Game.js")} game The game.
      */
@@ -37,4 +37,4 @@ class SpriteHandler {
     }
 }
 
-module.exports = SpriteHandler;
+module.exports = DisplayHandler;

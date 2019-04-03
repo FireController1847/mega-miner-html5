@@ -15,7 +15,7 @@ class GameMap {
          * A reference to the sprite grid for utility purposes.
          * @type {import("../Grid/Grid.js")}
          */
-        this.grid = this.game.spriteHandler.grid;
+        this.grid = this.game.displayHandler.grid;
 
         /**
          * Determines the maximum position vertically that the tiles will be generated (in grid units).

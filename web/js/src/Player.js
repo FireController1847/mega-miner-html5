@@ -14,13 +14,13 @@ class Player extends createjs.Shape {
          * A reference to the sprite grid for utility purposes.
          * @type {import("./Grid/Grid.js")}
          */
-        this.grid = this.game.spriteHandler.grid;
+        this.grid = this.game.displayHandler.grid;
 
         /**
          * A reference to the map for utility purposes.
          * @type {import("./Map.js")}
          */
-        this.map = this.game.spriteHandler.map;
+        this.map = this.game.displayHandler.map;
 
         /**
          * The speed at which this player will move at.

@@ -15,13 +15,13 @@ class Camera {
          * A reference to the player for utility purposes.
          * @type {import("./Player.js")}
          */
-        this.player = this.game.spriteHandler.player;
+        this.player = this.game.displayHandler.player;
 
         /**
          * A reference to the sprite grid for utility purposes.
          * @type {import("./Grid/Grid.js")}
          */
-        this.grid = this.game.spriteHandler.grid;
+        this.grid = this.game.displayHandler.grid;
 
         /**
          * The borders of the viewport for this camera.

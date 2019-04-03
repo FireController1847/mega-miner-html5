@@ -2,7 +2,7 @@
 const shim = require("shim-keyboard-event-key"); // eslint-disable-line
 // Requirements
 const InputHandler = require("./Handler/InputHandler.js");
-const SpriteHandler = require("./Handler/SpriteHandler.js");
+const DisplayHandler = require("./Handler/DisplayHandler.js");
 
 class Game extends createjs.Stage {
     constructor() {
@@ -37,12 +37,12 @@ class Game extends createjs.Stage {
      */
     init() {
         this.inputHandler = new InputHandler(this);
-        this.spriteHandler = new SpriteHandler(this);
+        this.displayHandler = new DisplayHandler(this);
         // TEMPORARY SPRITE TEST
         this.images = {
             img: new Image()
         };
-        this.images.img.onload = this.spriteHandler.init.bind(this.spriteHandler);
+        this.images.img.onload = this.displayHandler.init.bind(this.displayHandler);
         this.images.img.src = "web/images/grass.png";
         // END TEMPORARY SPRITE TEST
         createjs.Ticker.addEventListener("tick", this);

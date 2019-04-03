@@ -12,7 +12,7 @@ class MapTile extends createjs.Bitmap {
      * @param {Object.<String, any>} properties Contains the properties of this maptile.
      */
     constructor(map, tile, appearance, properties) {
-        super(map.game.spriteHandler);
+        super(map.game.displayHandler);
 
         /**
          * The map that created this tile.
