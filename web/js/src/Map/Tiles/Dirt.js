@@ -11,7 +11,7 @@ class Grass extends MapTile {
         /** @type {MapTileProperties} */
         this.properties = {
             type: MapTile.Types.DIRT,
-            thickness: 2,
+            thickness: 1.5,
             value: 0
         };
     }

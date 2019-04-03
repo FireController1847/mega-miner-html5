@@ -29,7 +29,7 @@ class Player extends createjs.Shape {
          * The speed at which the player will move at by default.
          * @type {number}
          */
-        this.defaultSpeed = 6.25;
+        this.defaultSpeed = 5;
 
         /**
          * The speed at which this player will move at.
@@ -134,7 +134,11 @@ class Player extends createjs.Shape {
                 if (this.y < this.pos.y) this.y += this.speed;
                 if (this.y > this.pos.y) this.y -= this.speed;
             }
-            if (this.y == this.pos.y && this.x == this.pos.x) {
+            if (
+                ((this.y >= this.pos.y - (this.grid.tileSize / 100) && this.y <= this.pos.y + (this.grid.tileSize / 100))) &&
+                ((this.x >= this.pos.x - (this.grid.tileSize / 100) && this.x <= this.pos.x + (this.grid.tileSize / 100)))) {
+                this.y = Math.round(this.y / this.grid.tileSize) * this.grid.tileSize;
+                this.x = Math.round(this.x / this.grid.tileSize) * this.grid.tileSize;
                 this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
                 const maptile = this.map.tiles[this.tile.toString()];
                 if (maptile) {
