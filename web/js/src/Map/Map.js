@@ -44,7 +44,13 @@ class GameMap {
          * A list of tiles used in the foreground (supposedly the same layer as the player).
          * @type {Object.<string, MapTile>}
          */
-        this.tiles = {};
+        this.fg_tiles = {};
+
+        /**
+         * A container used to decrease rendering for each tile.
+         * @type {createjs.Container}
+         */
+        this.tiles = new createjs.Container();
     }
 
     /**
@@ -70,8 +76,8 @@ class GameMap {
             const t = new Tile(i, this.horizonLineGU);
             const mt = new Grass(this, t);
             mt.make();
-            this.game.addChild(mt);
-            this.tiles[t.toString()] = mt;
+            this.tiles.addChild(mt);
+            this.fg_tiles[t.toString()] = mt;
         }
 
         // Generate Dirt
@@ -80,10 +86,12 @@ class GameMap {
                 const t = new Tile(gX, gY);
                 const mt = new Dirt(this, t);
                 mt.make();
-                this.game.addChild(mt);
-                this.tiles[t.toString()] = mt;
+                this.tiles.addChild(mt);
+                this.fg_tiles[t.toString()] = mt;
             }
         }
+        this.tiles.cache(0, 0, this.grid.width, this.grid.height);
+        this.game.addChild(this.tiles);
 
         this.game.update();
     }

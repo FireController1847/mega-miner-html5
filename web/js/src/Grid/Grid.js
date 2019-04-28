@@ -63,10 +63,10 @@ class Grid {
         this.recreate = true;
 
         /**
-         * A list of tiles for the overlay. Gets destroyed when grid overlayed is disabled.
-         * @type {Array<Tile>}
+         * A container for each tile of the overlay.
+         * @type {createjs.Container}
          */
-        this.overlayTiles = [];
+        this.overlayTiles = new createjs.Container();
 
         /**
          * Whether or not to show the grid overlay.
@@ -112,8 +112,7 @@ class Grid {
 
                     const tile = new createjs.Shape();
                     tile.graphics.beginFill(color).drawRect(x, y, this.tileSize, this.tileSize);
-                    this.game.addChild(tile);
-                    this.overlayTiles.push(tile);
+                    this.overlayTiles.addChild(tile);
                 } else {
                     // TODO: Is it nessecary to even do this or can we just keep this class without creating these "mathematical tiles"?
                     const tile = new Tile(gX, gY);
@@ -124,7 +123,11 @@ class Grid {
             gY++;
             gX = 0;
         }
-        if (overlay) this.game.update();
+        if (overlay) {
+            this.overlayTiles.cache(0, 0, this.width, this.height);
+            this.game.addChild(this.overlayTiles);
+            this.game.update();
+        }
     }
 
     /**
@@ -144,8 +147,8 @@ class Grid {
     toggleOverlay() {
         if (this.showGridOverlay) {
             this.showGridOverlay = false;
-            for (let i = 0; i < this.overlayTiles.length; i++) this.game.removeChild(this.overlayTiles[i]);
-            this.overlayTiles.length = 0;
+            this.overlayTiles.removeAllChildren();
+            this.overlayTiles.updateCache();
         } else {
             this.showGridOverlay = true;
             this.create(true);
@@ -156,9 +159,7 @@ class Grid {
      * Brings the overlay to the front of the screen. Used for relayering.
      */
     bringOverlayToFront() {
-        for (let i = 0; i < this.overlayTiles.length; i++) {
-            this.game.setChildIndex(this.overlayTiles[i], this.game.children.length - 1);
-        }
+        this.game.setChildIndex(this.overlayTiles, this.game.children.length - 1);
     }
 
     /**

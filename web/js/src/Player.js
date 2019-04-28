@@ -133,28 +133,28 @@ class Player extends createjs.Shape {
     tick() {
         if (!this.moving) {
             if (this.fuel <= 0) return this.outOfFuel();
-            let maptile = this.map.tiles[this.tile.toString()];
+            let maptile = this.map.fg_tiles[this.tile.toString()];
 
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0 || this.game.inputHandler.pressedKeys.indexOf("a") >= 0) {
-                maptile = this.map.tiles[new Tile(this.tile.gX - 1, this.tile.gY).toString()];
+                maptile = this.map.fg_tiles[new Tile(this.tile.gX - 1, this.tile.gY).toString()];
                 this.kpCharge(maptile, () => {
                     if (this.pos.x > 0) this.pos.x -= this.grid.tileSize;
                     if (this.pos.x < this.grid.borders.left) this.x = this.grid.borders.left;
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
-                maptile = this.map.tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
+                maptile = this.map.fg_tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
                 this.kpCharge(maptile, () => {
                     if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
                     if (this.pos.x > (this.grid.borders.right - this.grid.tileSize)) this.pos.x = this.grid.borders.right - this.grid.tileSize;
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
-                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
+                maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
                 this.kpCharge(maptile, () => {
                     if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
                     if (this.pos.y < this.map.horizonLine - this.grid.tileSize) this.pos.y = this.map.horizonLine - this.grid.tileSize;
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
-                maptile = this.map.tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
+                maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
                 this.kpCharge(maptile, () => {
                     if (this.pos.y < (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y += this.grid.tileSize;
                     if (this.pos.y > (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y = this.grid.borders.bottom - this.grid.tileSize;
@@ -191,14 +191,16 @@ class Player extends createjs.Shape {
                 this.y = Math.round(this.y / this.grid.tileSize) * this.grid.tileSize;
                 this.x = Math.round(this.x / this.grid.tileSize) * this.grid.tileSize;
                 this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
-                const maptile = this.map.tiles[this.tile.toString()];
+                const maptile = this.map.fg_tiles[this.tile.toString()];
                 if (maptile) {
-                    this.game.removeChild(maptile);
-                    delete this.map.tiles[this.tile.toString()];
+                    this.map.tiles.removeChild(maptile);
+                    delete this.map.fg_tiles[this.tile.toString()];
+                    this.map.tiles.updateCache();
                 }
-
+                if (this.pos.y >= this.map.horizonLine) {
+                    this.fuel -= 1;
+                }
                 this.moving = false;
-                this.fuel -= 1;
             }
         }
     }
@@ -249,7 +251,7 @@ class Player extends createjs.Shape {
      * @returns {MapTile}
      */
     getTileBelow() {
-        this.map.tiles.get();
+        this.map.fg_tiles.get();
     }
 
     get xCenter() {
