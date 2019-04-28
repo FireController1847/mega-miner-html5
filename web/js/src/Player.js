@@ -40,6 +40,13 @@ class Player extends createjs.Shape {
         this.speed = 5;
 
         /**
+         * How much to muliply the player's speed.
+         * Can be used for upgrades.
+         * @type {number}
+         */
+        this.speedMultiplier = 1;
+
+        /**
          * Whether or not to run the tick event.
          * @type {boolean}
          */
@@ -83,6 +90,23 @@ class Player extends createjs.Shape {
          */
         this.charge = 0;
 
+        /**
+         * Used to determine how close the pixel must be before "snapping" into place.
+         * @type {number}
+         */
+        this.pixelRange = this.grid.tileSize / 100;
+
+        /**
+         * Used to prevent infinite loops of the positioning system.
+         * A bitwise representation.
+         * 0 = right
+         * 1 = left
+         * 2 = down
+         * 3 = up
+         * @type {number}
+         */
+        this.movingDirection = 0;
+
         // Create the player for temporary testing \\
         this.graphics.beginFill("blue").drawRect(0, 0, this.grid.tileSize, this.grid.tileSize);
         this.game.addChild(this);
@@ -93,7 +117,6 @@ class Player extends createjs.Shape {
     tick() {
         if (!this.moving) {
             let maptile = this.map.tiles[this.tile.toString()];
-            if (!maptile && this.speed != this.defaultSpeed) this.speed = this.defaultSpeed;
 
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0 || this.game.inputHandler.pressedKeys.indexOf("a") >= 0) {
                 maptile = this.map.tiles[new Tile(this.tile.gX - 1, this.tile.gY).toString()];
@@ -124,19 +147,30 @@ class Player extends createjs.Shape {
                 this.pos.x = this.x;
                 this.charge = 0;
             }
-            if (maptile) this.speed = maptile.properties.thickness;
+
+            // Handle Speed & PixelRange
+            if (maptile) this.speed = maptile.properties.thickness * this.speedMultiplier;
+            else if (this.speed != this.defaultSpeed * this.speedMultiplier) this.speed = this.defaultSpeed * this.speedMultiplier;
+            if (this.speed > this.grid.tileSize) this.speed = this.grid.tileSize;
+            this.pixelRange = (this.grid.tileSize / 100) * this.speedMultiplier;
+
+            // Determine Position & Direction
             if ((this.pos.y != this.y || this.pos.x != this.x) && (!maptile || this.charge >= this.chargeReq)) this.moving = true;
+            if (this.x < this.pos.x) this.movingDirection = 0;
+            if (this.x > this.pos.x) this.movingDirection = 1;
+            if (this.y < this.pos.y) this.movingDirection = 2;
+            if (this.y > this.pos.y) this.movingDirection = 3;
         } else {
             if (this.pos.x != this.x) {
-                if (this.x < this.pos.x) this.x += this.speed;
-                if (this.x > this.pos.x) this.x -= this.speed;
+                if (this.movingDirection == 0) this.x += this.speed;
+                if (this.movingDirection == 1) this.x -= this.speed;
             } else if (this.pos.y != this.y) {
-                if (this.y < this.pos.y) this.y += this.speed;
-                if (this.y > this.pos.y) this.y -= this.speed;
+                if (this.movingDirection == 2) this.y += this.speed;
+                if (this.movingDirection == 3) this.y -= this.speed;
             }
             if (
-                ((this.y >= this.pos.y - (this.grid.tileSize / 100) && this.y <= this.pos.y + (this.grid.tileSize / 100))) &&
-                ((this.x >= this.pos.x - (this.grid.tileSize / 100) && this.x <= this.pos.x + (this.grid.tileSize / 100)))) {
+                ((this.pos.x + this.pixelRange >= this.x) && (this.x >= this.pos.x - this.pixelRange)) &&
+                ((this.pos.y + this.pixelRange >= this.y) && (this.y >= this.pos.y - this.pixelRange))) {
                 this.y = Math.round(this.y / this.grid.tileSize) * this.grid.tileSize;
                 this.x = Math.round(this.x / this.grid.tileSize) * this.grid.tileSize;
                 this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
