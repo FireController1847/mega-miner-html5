@@ -82,8 +82,8 @@ class Camera {
             }
         }
 
-        this.game.y = -this.viewport.top;
-        this.game.x = -this.viewport.left;
+        if (this.game.y != -this.viewport.top) this.game.y = -this.viewport.top;
+        if (this.game.x != -this.viewport.left) this.game.x = -this.viewport.left;
     }
 
     /**

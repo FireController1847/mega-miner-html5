@@ -2,6 +2,7 @@ const Grid = require("../Grid/Grid.js");
 const Player = require("../Player.js");
 const Camera = require("../Camera.js");
 const GameMap = require("../Map/Map.js");
+const FOWHandler = require("./FOWHandler.js");
 
 /**
  * Manages and handles all sprites on the screen.
@@ -26,12 +27,17 @@ class DisplayHandler {
     }
 
     init() {
+        // Generate Map
         this.map = new GameMap(this.game);
         this.map.generate();
 
+        // Initiate Player & Camera
         this.player = new Player(this.game);
         this.camera = new Camera(this.game);
         this.relayer();
+
+        // Initiate Fog-Of-War
+        this.fow = new FOWHandler(this.game);
     }
 
     fade(out, callback) {
