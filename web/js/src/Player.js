@@ -41,7 +41,7 @@ class Player extends createjs.Shape {
 
         /**
          * How much to muliply the player's speed.
-         * Can be used for upgrades.
+         * Can be used for upgrades. Does not affect non-digging speed.
          * @type {number}
          */
         this.speedMultiplier = 1;
@@ -61,8 +61,7 @@ class Player extends createjs.Shape {
         /**
          * Set the initial position for the player.
          */
-        this.x = Math.round((this.grid.widthGU * this.grid.tileSize) / 2);
-        this.y = this.map.horizonLine - this.grid.tileSize;
+        this.resetPos();
 
         /**
          * The pixel position of the player before actual movement.
@@ -91,6 +90,24 @@ class Player extends createjs.Shape {
         this.charge = 0;
 
         /**
+         * How many tiles this player can move without refuling.
+         * @type {number}
+         */
+        this.fuelDefault = 60;
+
+        /**
+         * How much fuel the player has left.
+         * @type {number}
+         */
+        this.fuel = this.fuelDefault;
+
+        /**
+         * Used to prevent multiple calls when out of fuel.
+         * @type {boolean}
+         */
+        this.fuelDebounce = false;
+
+        /**
          * Used to determine how close the pixel must be before "snapping" into place.
          * @type {number}
          */
@@ -98,7 +115,6 @@ class Player extends createjs.Shape {
 
         /**
          * Used to prevent infinite loops of the positioning system.
-         * A bitwise representation.
          * 0 = right
          * 1 = left
          * 2 = down
@@ -116,6 +132,7 @@ class Player extends createjs.Shape {
 
     tick() {
         if (!this.moving) {
+            if (this.fuel <= 0) return this.outOfFuel();
             let maptile = this.map.tiles[this.tile.toString()];
 
             if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0 || this.game.inputHandler.pressedKeys.indexOf("a") >= 0) {
@@ -150,8 +167,8 @@ class Player extends createjs.Shape {
 
             // Handle Speed & PixelRange
             if (maptile) this.speed = maptile.properties.thickness * this.speedMultiplier;
-            else if (this.speed != this.defaultSpeed * this.speedMultiplier) this.speed = this.defaultSpeed * this.speedMultiplier;
-            if (this.speed > this.grid.tileSize) this.speed = this.grid.tileSize;
+            else if (this.speed != this.defaultSpeed * this.speedMultiplier) this.speed = this.defaultSpeed;
+            if (this.speed > this.defaultSpeed) this.speed = this.defaultSpeed;
             this.pixelRange = (this.grid.tileSize / 100) * this.speedMultiplier;
 
             // Determine Position & Direction
@@ -179,7 +196,9 @@ class Player extends createjs.Shape {
                     this.game.removeChild(maptile);
                     delete this.map.tiles[this.tile.toString()];
                 }
+
                 this.moving = false;
+                this.fuel -= 1;
             }
         }
     }
@@ -195,6 +214,30 @@ class Player extends createjs.Shape {
             logic();
         }
         if (this.charge <= this.chargeReq) this.charge++;
+    }
+
+    /**
+     * Event for when the player has run out of fuel.
+     */
+    outOfFuel() {
+        if (this.fuelDebounce) return;
+        this.fuelDebounce = true;
+        console.warn("PLAYER OUT OF FUEL, RECHARGING!");
+        setTimeout(() => {
+            this.resetPos();
+            console.log("FUEL RECHARGE COMPLETE");
+            this.fuel = 60;
+            this.fuelDebounce = false;
+        }, 5000);
+    }
+
+    /**
+     * Resets the player to the initial position.
+     */
+    resetPos() {
+        this.x = Math.round((this.grid.widthGU * this.grid.tileSize) / 2);
+        this.y = this.map.horizonLine - this.grid.tileSize;
+        this.pos = { x: this.x, y: this.y };
     }
 
     /**
