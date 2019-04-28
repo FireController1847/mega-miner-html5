@@ -100,7 +100,7 @@ class FOWHandler {
      * @param {CustomEvent} event
      */
     tilemove(event) {
-        console.log("TILE MOVE: ", event.detail);
+        // console.log("TILE MOVE: ", event.detail);
         /** @type {import("../Grid/Tile.js")} */
         const tile = event.detail;
         if (tile.gY >= 9) {

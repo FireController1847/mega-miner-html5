@@ -1,20 +1,20 @@
 /** @typedef {import("../MapTile.js").MapTileProperties} MapTileProperties */
 const MapTile = require("../MapTile.js");
 
-class Dirt extends MapTile {
+class Coal extends MapTile {
     constructor(...args) {
         super(...args);
 
         /** @type {string} */
-        this.appearance = "dirt";
+        this.appearance = "coal";
 
         /** @type {MapTileProperties} */
         this.properties = {
             type: MapTile.Types.DIRT,
             thickness: 1.5,
-            value: 0
+            value: 20
         };
     }
 }
 
-module.exports = Dirt;
+module.exports = Coal;

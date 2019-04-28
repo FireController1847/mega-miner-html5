@@ -255,6 +255,13 @@ class Player extends createjs.Shape {
         this.map.fg_tiles.get();
     }
 
+    /**
+     * Brings this player to the front of the screen. Used for relayering.
+     */
+    bringToFront() {
+        this.game.setChildIndex(this, this.game.children.length - 1);
+    }
+
     get xCenter() {
         return this.x + (this.grid.tileSize / 2);
     }

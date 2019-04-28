@@ -52,7 +52,9 @@ class DisplayHandler {
     }
 
     relayer() {
-        this.grid.bringOverlayToFront();
+        if (this.map) this.map.bringToFront();
+        if (this.player) this.player.bringToFront();
+        if (this.grid) this.grid.bringOverlayToFront();
     }
 }
 
