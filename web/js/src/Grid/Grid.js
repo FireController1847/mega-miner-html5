@@ -24,19 +24,31 @@ class Grid {
          * The amount of horizontal tiles to create.
          * @type {number}
          */
-        this.width = width;
+        this.widthGU = width;
 
         /**
          * The amount of vertical tiles to create.
          * @type {number}
          */
-        this.height = height;
+        this.heightGU = height;
+
+        /**
+         * How wide the grid is in pixels.
+         * @type {number}
+         */
+        this.width = this.widthGU * this.tileSize;
+
+        /**
+         * How tall the grid is in pixels.
+         * @type {number}
+         */
+        this.height = this.heightGU * this.tileSize;
 
         /**
          * The borders of this grid.
          * @type {Borders}
          */
-        this.borders = new Borders(0, 0, this.height * this.tileSize, this.width * this.tileSize);
+        this.borders = new Borders(0, 0, this.heightGU * this.tileSize, this.widthGU * this.tileSize);
 
         /**
          * A list of each tile in this grid.
@@ -85,8 +97,8 @@ class Grid {
                     // Determines the center and then draws a checkerboard
                     // by changing the color of each tile.
                     let color;
-                    if ((Math.round(this.height / 2) == (gY + 1)) &&
-                    (Math.round(this.width / 2) == (gX + 1))) {
+                    if ((Math.round(this.heightGU / 2) == (gY + 1)) &&
+                    (Math.round(this.widthGU / 2) == (gX + 1))) {
                         color = "rgba(255, 0, 0, 0.25)";
                     } else if (gY % 2 <= 0 && gX % 2 <= 0) {
                         color = "rgba(255, 255, 255, 0.25)";

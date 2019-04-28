@@ -54,7 +54,7 @@ class Player extends createjs.Shape {
         /**
          * Set the initial position for the player.
          */
-        this.x = Math.round((this.grid.width * this.grid.tileSize) / 2);
+        this.x = Math.round((this.grid.widthGU * this.grid.tileSize) / 2);
         this.y = this.map.horizonLine - this.grid.tileSize;
 
         /**

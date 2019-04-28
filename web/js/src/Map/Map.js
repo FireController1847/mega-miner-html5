@@ -53,11 +53,11 @@ class GameMap {
     generate() {
         // Generate Background
         const bgdirt = new createjs.Shape();
-        bgdirt.graphics.beginBitmapFill(this.game.loadingHandler.sprites.bgdirt.image).drawRect(0, this.horizonLine, this.grid.width * this.grid.tileSize, (this.grid.height * this.grid.tileSize) - this.horizonLine);
+        bgdirt.graphics.beginBitmapFill(this.game.loadingHandler.sprites.bgdirt.image).drawRect(0, this.horizonLine, this.grid.widthGU * this.grid.tileSize, (this.grid.heightGU * this.grid.tileSize) - this.horizonLine);
         this.game.addChild(bgdirt);
 
         // Generate Background Grass Layer
-        for (let i = 0; i < this.grid.width; i++) {
+        for (let i = 0; i < this.grid.widthGU; i++) {
             const t = new Tile(i, this.horizonLineGU);
             // Background Grass Tile
             const bggt = new MapTile(this, t, "bggrass", {});
@@ -66,7 +66,7 @@ class GameMap {
         }
 
         // Generate First Grass Layer
-        for (let i = 0; i < this.grid.width; i++) {
+        for (let i = 0; i < this.grid.widthGU; i++) {
             const t = new Tile(i, this.horizonLineGU);
             const mt = new Grass(this, t);
             mt.make();
@@ -75,8 +75,8 @@ class GameMap {
         }
 
         // Generate Dirt
-        for (let gY = this.horizonLineGU + 1; gY < this.grid.height; gY++) {
-            for (let gX = 0; gX < this.grid.width; gX++) {
+        for (let gY = this.horizonLineGU + 1; gY < this.grid.heightGU; gY++) {
+            for (let gX = 0; gX < this.grid.widthGU; gX++) {
                 const t = new Tile(gX, gY);
                 const mt = new Dirt(this, t);
                 mt.make();
