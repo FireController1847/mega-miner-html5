@@ -15,6 +15,8 @@ class DisplayHandler {
 
         /**
          * The grid that will be used to position sprites.
+         * WARNING: True grid size is ~100x250, update before release!
+         * INFO: Grid kept small to keep load times short during development.
          * @type {Grid}
          */
         this.grid = new Grid(this.game, 50, 40, 40);
