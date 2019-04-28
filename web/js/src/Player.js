@@ -201,6 +201,7 @@ class Player extends createjs.Shape {
                     this.fuel -= 1;
                 }
                 this.moving = false;
+                this.dispatchEvent(new CustomEvent("tilemove", { detail: this.tile }));
             }
         }
     }

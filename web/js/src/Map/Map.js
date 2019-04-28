@@ -33,14 +33,6 @@ class GameMap {
         this.horizonLine = this.horizonLineGU * this.grid.tileSize;
 
         /**
-         * A list of tiles used in the background.
-         * TODO: Determine if needed. Might not be needed if we can fill a shape with the bitmap
-         *  instead of creating individual tiles for the background, as they're never interacted with.
-         * @type {Map<Tile, MapTile>}
-         */
-        this.bg_tiles = new Map();
-
-        /**
          * A list of tiles used in the foreground (supposedly the same layer as the player).
          * @type {Object.<string, MapTile>}
          */
