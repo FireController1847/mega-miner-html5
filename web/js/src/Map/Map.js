@@ -51,6 +51,20 @@ class GameMap {
      * Generates a new map.
      */
     generate() {
+        // Generate Background
+        const bgdirt = new createjs.Shape();
+        bgdirt.graphics.beginBitmapFill(this.game.loadingHandler.sprites.bgdirt.image).drawRect(0, this.horizonLine, this.grid.width * this.grid.tileSize, (this.grid.height * this.grid.tileSize) - this.horizonLine);
+        this.game.addChild(bgdirt);
+
+        // Generate Background Grass Layer
+        for (let i = 0; i < this.grid.width; i++) {
+            const t = new Tile(i, this.horizonLineGU);
+            // Background Grass Tile
+            const bggt = new MapTile(this, t, "bggrass", {});
+            bggt.make();
+            this.game.addChild(bggt);
+        }
+
         // Generate First Grass Layer
         for (let i = 0; i < this.grid.width; i++) {
             const t = new Tile(i, this.horizonLineGU);

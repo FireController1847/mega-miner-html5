@@ -18,7 +18,9 @@ class LoadingHandler {
          */
         this.sprites = {
             grass: new Sprite("web/images/grass.png"),
-            dirt: new Sprite("web/images/dirt.png")
+            dirt: new Sprite("web/images/dirt.png"),
+            bgdirt: new Sprite("web/images/bgdirt.png"),
+            bggrass: new Sprite("web/images/bggrass.png")
         };
     }
 
