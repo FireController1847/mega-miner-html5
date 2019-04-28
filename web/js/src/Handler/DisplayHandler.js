@@ -34,6 +34,17 @@ class DisplayHandler {
         this.relayer();
     }
 
+    fade(out, callback) {
+        if (out == null || !callback) throw new Error("Missing arguments");
+        const fade = document.getElementById("fade");
+        if (out) fade.style.opacity = 0;
+        else fade.style.opacity = 1;
+        // Set opacity then wait for transition
+        if (out) fade.style.opacity = 1;
+        else fade.style.opacity = 0;
+        setTimeout(() => callback(), 1000);
+    }
+
     relayer() {
         this.grid.bringOverlayToFront();
     }

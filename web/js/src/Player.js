@@ -223,12 +223,16 @@ class Player extends createjs.Shape {
         if (this.fuelDebounce) return;
         this.fuelDebounce = true;
         console.warn("PLAYER OUT OF FUEL, RECHARGING!");
-        setTimeout(() => {
+        this.game.displayHandler.fade(true, () => {
             this.resetPos();
-            console.log("FUEL RECHARGE COMPLETE");
             this.fuel = 60;
-            this.fuelDebounce = false;
-        }, 5000);
+            setTimeout(() => {
+                this.game.displayHandler.fade(false, () => {
+                    console.log("FUEL RECHARGE COMPLETE");
+                    this.fuelDebounce = false;
+                });
+            }, 2000);
+        });
     }
 
     /**
