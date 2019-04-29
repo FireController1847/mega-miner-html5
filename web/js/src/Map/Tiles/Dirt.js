@@ -5,12 +5,9 @@ class Dirt extends MapTile {
     constructor(...args) {
         super(...args);
 
-        /** @type {string} */
-        this.appearance = "dirt";
-
         /** @type {MapTileProperties} */
         this.properties = {
-            type: MapTile.Types.DIRT,
+            type: MapTile.Type.DIRT,
             thickness: 1.5,
             value: 0
         };

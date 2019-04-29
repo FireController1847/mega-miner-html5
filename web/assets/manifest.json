@@ -1,0 +1,7 @@
+{
+    "path": "assets/",
+    "manifest": [
+        { "src": "bgdirt.png", "id": "bgdirt" },
+        { "src": "tiles.json", "id": "tiles", "type": "spritesheet" }
+    ]
+}

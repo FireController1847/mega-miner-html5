@@ -71,7 +71,7 @@ class GameMap {
 
         // Generate Background
         const bgdirt = new createjs.Shape();
-        bgdirt.graphics.beginBitmapFill(this.game.loadingHandler.sprites.bgdirt.image).drawRect(0, this.horizonLine, this.grid.widthGU * this.grid.tileSize, (this.grid.heightGU * this.grid.tileSize) - this.horizonLine);
+        bgdirt.graphics.beginBitmapFill(this.game.loadingHandler.sprites.bgdirt).drawRect(0, this.horizonLine, this.grid.widthGU * this.grid.tileSize, (this.grid.heightGU * this.grid.tileSize) - this.horizonLine);
         this.bg_tiles.push(bgdirt);
         this.game.addChild(bgdirt);
 
@@ -80,7 +80,7 @@ class GameMap {
         for (let i = 0; i < this.grid.widthGU; i++) {
             const t = new Tile(i, this.horizonLineGU);
             // Background Grass Tile
-            const bggt = new MapTile(this, t, "bggrass", {});
+            const bggt = new MapTile(this, t, { type: MapTile.Type.BG_GRASS });
             bggt.make();
             bggrass.addChild(bggt);
         }
@@ -107,7 +107,6 @@ class GameMap {
                 this.fg_tiles[t.toString()] = mt;
             }
         }
-        this.tiles.cache(0, this.horizonLine, this.grid.width, this.grid.height);
         this.game.addChild(this.tiles);
 
         // Temporary variable to determine which layer we're on.
@@ -123,7 +122,6 @@ class GameMap {
         }
 
         this.game.displayHandler.relayer();
-        this.tiles.updateCache();
         this.game.update();
     }
 
@@ -175,7 +173,6 @@ class GameMap {
         });
         this.fg_tiles = [];
         this.tiles.removeAllChildren();
-        this.tiles.updateCache();
         this.game.displayHandler.relayer();
     }
 

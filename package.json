@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch:code": "watchify web/js/src/Game.js -o web/js/bundle.js -t babelify -p tinyify",
-    "watch:browser": "reload -d -s web/html/index.html -w web/js/bundle.js",
+    "watch:browser": "reload -b -d web/ -s html/index.html -w web/js/bundle.js",
     "build": "browserify -t babelify -p tinyify web/js/src/Game.js -o web/js/bundle.js"
   },
   "author": "FireController#1847",

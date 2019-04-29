@@ -4,14 +4,14 @@
 /**
  * Used for the player and game to determine if the tile is breakable, where it should be placed, and how the game should react to it.
  */
-class MapTile extends createjs.Bitmap {
+class MapTile extends createjs.Sprite {
     /**
      * @param {Map} map The map that created this tile.
      * @param {Tile} tile Contains information about this maptile's position on the grid.
      * @param {string} appearance Contains the image id used to determine this maptile's appearance.
      * @param {MapTileProperties} properties Contains the properties of this maptile.
      */
-    constructor(map, tile, appearance, properties) {
+    constructor(map, tile, properties) {
         super();
 
         /**
@@ -33,41 +33,37 @@ class MapTile extends createjs.Bitmap {
          * @type {MapTileProperties}
          */
         this.properties = properties;
-
-        /**
-         * Contains the image id used to determine this maptile's appearance.
-         * @type {string}
-         */
-        this.appearance = appearance;
     }
 
     /**
      * Creates this maptile to be ready to be displayed.
      */
     make() {
-        const sprite = this.map.game.loadingHandler.sprites[this.appearance];
-        this.image = sprite.image;
+        this.spriteSheet = this.map.game.loadingHandler.sprites.tiles;
+        this.gotoAndStop(this.properties.type);
         this.setTransform(
             this.tile.gX * this.map.grid.tileSize,
-            this.tile.gY * this.map.grid.tileSize,
-            this.map.grid.tileSize / this.image.width,
-            this.map.grid.tileSize / this.image.height
+            this.tile.gY * this.map.grid.tileSize
         );
     }
 }
 /**
  * Determines the different tile types.
+ * Used for fetching the image from the loader.
  * @readonly
  * @enum {number}
  */
-MapTile.Types = {
-    DIRT: 0
+MapTile.Type = {
+    DIRT: 2,
+    GRASS: 1,
+    COAL: 6,
+    BG_GRASS: 4
 };
 
 /**
  * Contains information about the tile such as thickness, value, and more.
  * @typedef {Object} MapTileProperties
- * @property {MapTile.Types} type The type of tile this is.
+ * @property {MapTile.Type} type The type of tile this is.
  * @property {number} tickness Determines the speed at which the player moves in this tile (in pixels per frame).
  * @property {number} value The value of this tile.
  */

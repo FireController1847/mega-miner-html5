@@ -42,11 +42,12 @@ class Game extends createjs.Stage {
         this.displayHandler = new DisplayHandler(this);
         // TEMPORARY SPRITE TEST
         this.loadingHandler = new LoadingHandler(this);
-        this.loadingHandler.loadSprites(this.displayHandler.init.bind(this.displayHandler));
+        this.loadingHandler.load(this.displayHandler.init.bind(this.displayHandler));
         // END TEMPORARY SPRITE TEST
         createjs.Ticker.addEventListener("tick", this);
         createjs.Ticker.framerate = this.framerate;
         this.resize();
+        this.canvas.getContext("2d").imageSmoothingEnabled = false;
     }
 
     /**

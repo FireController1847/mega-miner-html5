@@ -5,12 +5,9 @@ class Coal extends MapTile {
     constructor(...args) {
         super(...args);
 
-        /** @type {string} */
-        this.appearance = "coal";
-
         /** @type {MapTileProperties} */
         this.properties = {
-            type: MapTile.Types.DIRT,
+            type: MapTile.Type.COAL,
             thickness: 1.5,
             value: 20
         };

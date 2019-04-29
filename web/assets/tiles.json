@@ -1,0 +1,8 @@
+{
+    "images": ["assets/tiles.png"],
+    "frames": {
+        "width": 50,
+        "height": 50,
+        "count": 24
+    }
+}

@@ -195,7 +195,7 @@ class Player extends createjs.Shape {
                 if (maptile) {
                     this.map.tiles.removeChild(maptile);
                     delete this.map.fg_tiles[this.tile.toString()];
-                    this.map.tiles.updateCache();
+                    this.dispatchEvent(new CustomEvent("tiledestroy", { detail: this.tile }));
                 }
                 if (this.pos.y >= this.map.horizonLine) {
                     this.fuel -= 1;

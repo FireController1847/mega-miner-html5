@@ -1,4 +1,4 @@
-const Sprite = require("../Sprite.js");
+// const Sprite = require("../SpriteOld.js");
 
 /**
  * Used for handling everything that needs to be loaded.
@@ -12,38 +12,34 @@ class LoadingHandler {
         this.game = game;
 
         /**
-         * Contains a list of all the sprites used in the game.
-         * TODO: Create a JSON manifest for this instead.
-         * @type {Object.<string, Sprite>}
+         * The path to the manifest.
+         * @type {string}
+         */
+        this.manifest = "assets/manifest.json";
+
+        /**
+         * Contains a list of all the sprites used in the game indexed by their asset id.
+         * @type {Object.<string, HTMLImageElement|createjs.SpriteSheet>}
          */
         this.sprites = {
-            grass: new Sprite("web/images/grass.png"),
-            dirt: new Sprite("web/images/dirt.png"),
-            coal: new Sprite("web/images/coal.png"),
-            bgdirt: new Sprite("web/images/bgdirt.png"),
-            bggrass: new Sprite("web/images/bggrass.png")
+
         };
     }
 
-    /**
-     * Grabs each sprite from the sprite list and loads it, then calls the callback once completed.
-     */
-    loadSprites(callback) {
-        this.spriteQueue = new createjs.LoadQueue();
-        for (const key in this.sprites) {
-            this.spriteQueue.loadFile(this.sprites[key], false);
-        }
+    load(callback) {
+        this.loader = new createjs.LoadQueue();
 
-        this.spriteQueue.on("fileload", target => {
-            target.item.loaded = true;
-            target.item.image = target.result;
+        this.loader.on("fileload", event => {
+            if (event.item.type == "image" || event.item.type == "spritesheet") {
+                this.sprites[event.item.id] = event.result;
+            }
         });
-        this.spriteQueue.on("error", target => {
-            target.data.errored = true;
+        this.loader.on("error", err => {
+            console.warn("Failed to load " + err.data.id + "!");
         });
-        this.spriteQueue.on("complete", callback);
+        this.loader.on("complete", callback);
 
-        this.spriteQueue.load();
+        this.loader.loadManifest({ src: this.manifest, type: "manifest" });
     }
 }
 
