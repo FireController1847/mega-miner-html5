@@ -37,6 +37,7 @@ class Game extends createjs.Stage {
      * Initiates variables, arrays, and other objects.
      */
     init() {
+        this.snapToPixelEnabled = true;
         this.inputHandler = new InputHandler(this);
         this.displayHandler = new DisplayHandler(this);
         // TEMPORARY SPRITE TEST

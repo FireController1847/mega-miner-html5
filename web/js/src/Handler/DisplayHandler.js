@@ -21,9 +21,6 @@ class DisplayHandler {
          * @type {Grid}
          */
         this.grid = new Grid(this.game, 50, 40, 40);
-
-        /** TEMPORARY! DO NOT KEEP IN FULL RELEASE! */
-        this.grid.toggleOverlay();
     }
 
     init() {

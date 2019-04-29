@@ -39,6 +39,7 @@ class FOWHandler {
     }
 
     init() {
+        this.stage.snapToPixelEnabled = true;
         /**
          * The actual fog shape for FOW
          * @type {createjs.Shape}
@@ -86,6 +87,11 @@ class FOWHandler {
         if (this.stage.x != this.game.x || this.stage.y != this.game.y) {
             this.stage.x = this.game.x;
             this.stage.y = this.game.y;
+            this.stage.update();
+        }
+        if (this.stage.scaleX != this.game.scaleX || this.stage.scaleY != this.game.scaleY) {
+            this.stage.scaleX = this.game.scaleX;
+            this.stage.scaleY = this.game.scaleY;
             this.stage.update();
         }
         if (this.plrReveal.x != this.player.x || this.plrReveal.y != this.player.y) {
