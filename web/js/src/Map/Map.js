@@ -84,7 +84,6 @@ class GameMap {
             bggt.make();
             bggrass.addChild(bggt);
         }
-        bggrass.cache(0, this.horizonLine, this.grid.width, this.grid.tileSize);
         this.bg_tiles.push(bggrass);
         this.game.addChild(bggrass);
 

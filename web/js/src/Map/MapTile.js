@@ -57,7 +57,7 @@ MapTile.Type = {
     DIRT: 2,
     GRASS: 1,
     COAL: 6,
-    BG_GRASS: 4
+    BG_GRASS: 3
 };
 
 /**
