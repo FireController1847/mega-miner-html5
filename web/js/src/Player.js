@@ -82,6 +82,12 @@ class Player extends createjs.Shape {
         this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
 
         /**
+         * How much money the player has.
+         * @type {number}
+         */
+        this.money = 300;
+
+        /**
          * The amount of ticks required before the player can enter a maptile.
          * Creates a sort of "push force" feeling.
          * @type {number}
@@ -95,16 +101,16 @@ class Player extends createjs.Shape {
         this.charge = 0;
 
         /**
-         * How many tiles this player can move without refuling.
+         * How many frames this player can be moving without refuling.
          * @type {number}
          */
-        this.fuelDefault = 60;
+        this.maxFuel = 150;
 
         /**
          * How much fuel the player has left.
          * @type {number}
          */
-        this.fuel = this.fuelDefault;
+        this.fuel = this.maxFuel;
 
         /**
          * Used to prevent multiple calls when out of fuel.
@@ -136,6 +142,7 @@ class Player extends createjs.Shape {
     }
 
     tick() {
+        if (this.moving && this.tile.gY > 7) this.fuel -= 0.09;
         if (!this.moving && this.canMove) {
             if (this.fuel <= 0) return this.outOfFuel();
             let maptile = this.map.fg_tiles[this.tile.toString()];
@@ -177,7 +184,10 @@ class Player extends createjs.Shape {
             this.pixelRange = (this.grid.tileSize / 100) * this.speedMultiplier;
 
             // Determine Position & Direction
-            if ((this.pos.y != this.y || this.pos.x != this.x) && (!maptile || this.charge >= this.chargeReq)) this.moving = true;
+            if ((this.pos.y != this.y || this.pos.x != this.x) && (!maptile || this.charge >= this.chargeReq)) {
+                this.moving = true;
+                if (this.tile.gY > 7) this.fuel -= 0.07;
+            }
             if (this.x < this.pos.x) this.movingDirection = 0;
             if (this.x > this.pos.x) this.movingDirection = 1;
             if (this.y < this.pos.y) this.movingDirection = 2;
@@ -201,9 +211,6 @@ class Player extends createjs.Shape {
                     this.map.tiles.removeChild(maptile);
                     delete this.map.fg_tiles[this.tile.toString()];
                     this.dispatchEvent(new CustomEvent("tiledestroy", { detail: this.tile }));
-                }
-                if (this.pos.y >= this.map.horizonLine) {
-                    this.fuel -= 1;
                 }
                 this.moving = false;
                 this.dispatchEvent(new CustomEvent("tilemove", { detail: this.tile }));
@@ -233,8 +240,11 @@ class Player extends createjs.Shape {
         this.canMove = false;
         console.warn("PLAYER OUT OF FUEL, RECHARGING!");
         this.game.displayHandler.fade(true, () => {
+            const depth = this.tile.gY - 3;
+            const depthInMeters = depth * Math.round(depth / this.grid.metersPerTile);
+            this.fuel = this.maxFuel;
+            this.money -= depthInMeters + this.maxFuel;
             this.resetPos();
-            this.fuel = 60;
             setTimeout(() => {
                 this.game.displayHandler.fade(false, () => {
                     console.log("FUEL RECHARGE COMPLETE");

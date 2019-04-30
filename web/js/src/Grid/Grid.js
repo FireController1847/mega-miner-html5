@@ -45,6 +45,12 @@ class Grid {
         this.height = this.heightGU * this.tileSize;
 
         /**
+         * How many meters there are per tile.
+         * @type {number}
+         */
+        this.metersPerTile = 5;
+
+        /**
          * The borders of this grid.
          * @type {Borders}
          */
