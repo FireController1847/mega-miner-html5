@@ -87,3 +87,6 @@ typings/
 out/
 release/
 **/bundle*
+
+# ActionScript Files
+*.as
