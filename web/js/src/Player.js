@@ -53,7 +53,12 @@ class Player extends createjs.Shape {
         this.tickEnabled = true;
 
         /**
-         * Whether or not the character is currently moving from one tile to the next.
+         * Whether or not the player has the ability to move.
+         */
+        this.canMove = true;
+
+        /**
+         * Whether or not the player is currently moving from one tile to the next.
          * @type {boolean}
          */
         this.moving = false;
@@ -131,7 +136,7 @@ class Player extends createjs.Shape {
     }
 
     tick() {
-        if (!this.moving) {
+        if (!this.moving && this.canMove) {
             if (this.fuel <= 0) return this.outOfFuel();
             let maptile = this.map.fg_tiles[this.tile.toString()];
 
@@ -225,6 +230,7 @@ class Player extends createjs.Shape {
     outOfFuel() {
         if (this.fuelDebounce) return;
         this.fuelDebounce = true;
+        this.canMove = false;
         console.warn("PLAYER OUT OF FUEL, RECHARGING!");
         this.game.displayHandler.fade(true, () => {
             this.resetPos();
@@ -233,6 +239,7 @@ class Player extends createjs.Shape {
                 this.game.displayHandler.fade(false, () => {
                     console.log("FUEL RECHARGE COMPLETE");
                     this.fuelDebounce = false;
+                    this.canMove = true;
                 });
             }, 2000);
         });
