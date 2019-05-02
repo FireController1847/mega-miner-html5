@@ -87,6 +87,8 @@ class Game extends createjs.Stage {
 }
 
 window.onload = function() {
+    const pkg = require("../package.json");
+    document.getElementById("version").innerHTML = `Version ${pkg.version}`;
     // Create and initiate the game. Wohoo!
     window.game = new Game();
 };

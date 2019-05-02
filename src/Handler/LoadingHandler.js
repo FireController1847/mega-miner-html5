@@ -1,5 +1,3 @@
-// const Sprite = require("../SpriteOld.js");
-
 /**
  * Used for handling everything that needs to be loaded.
  * Also contains direct pathes to many needed objects like sprites.
