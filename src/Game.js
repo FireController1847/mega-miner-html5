@@ -24,6 +24,36 @@ class Game extends createjs.Stage {
          */
         this.framerate = 60;
 
+        /**
+         * The last average framerate.
+         * @type {number}
+         */
+        this.lastAvgFramerate = 0;
+
+        /**
+         * A temporary holder for frame counts.
+         * @type {number}
+         */
+        this.frameCount = 0;
+
+        /**
+         * The amount of time since the last framerate update.
+         * @type {number}
+         */
+        this.timeSinceLastFpsCheck = Date.now();
+
+        /**
+         * Whether or not to enable framerate monitor.
+         * @type {boolean}
+         */
+        this.monitorFramerate = true;
+
+        /**
+         * The HTML element for the FPS counter.
+         * @type {HTMLElement}
+         */
+        this.fpsElement = null;
+
 
         // Events \\
         window.addEventListener("resize", () => { this.resize(); });
@@ -51,6 +81,27 @@ class Game extends createjs.Stage {
         this.checkHTML();
         this.resize();
         this.canvas.getContext("2d").imageSmoothingEnabled = false;
+    }
+
+    /**
+     * Runs every time the createjs ticker ticks.
+     */
+    tick() {
+        if (this.fpsElement == null) return;
+        if (this.monitorFramerate) {
+            if (this.fpsElement.style.display == "none") {
+                this.fpsElement.style.display = "block";
+            }
+            this.frameCount++;
+            if (Date.now() - this.timeSinceLastFpsCheck >= 1000) {
+                this.lastAvgFramerate = this.frameCount;
+                this.frameCount = 0;
+                this.timeSinceLastFpsCheck = Date.now();
+                this.fpsElement.innerHTML = "FPS: " + this.lastAvgFramerate;
+            }
+        } else if (this.fpsElement.style.display == "block") {
+            this.fpsElement.style.display = "none";
+        }
     }
 
     /**
@@ -91,6 +142,7 @@ window.onload = function() {
     document.getElementById("version").innerHTML = `Version ${pkg.version}`;
     // Create and initiate the game. Wohoo!
     window.game = new Game();
+    window.game.fpsElement = document.getElementById("fps");
 };
 
 // Used for typedef. No real use in code.

@@ -46,11 +46,20 @@
             margin-top: 25px;
             z-index: 5;
         }
+        #fps {
+            position: fixed;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+            margin: 5px;
+            right: 0;
+            z-index: 5;
+        }
     </style>
 </head>
 <body>
     <p id="version"></p>
     <p id="fuel">Fuel Left: 100%</p>
+    <p id="fps" style="display: none;">FPS: 0</p>
     <canvas id="canvas"></canvas>
     <canvas id="fow"></canvas>
     <div id="fade"></div>
