@@ -8,7 +8,7 @@ class Coal extends MapTile {
         /** @type {MapTileProperties} */
         this.properties = {
             type: MapTile.Type.COAL,
-            thickness: 1.5,
+            thickness: 75,
             value: 20
         };
     }

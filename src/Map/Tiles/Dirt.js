@@ -8,7 +8,7 @@ class Dirt extends MapTile {
         /** @type {MapTileProperties} */
         this.properties = {
             type: MapTile.Type.DIRT,
-            thickness: 72.5,
+            thickness: 75,
             value: 0
         };
     }
