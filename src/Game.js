@@ -37,10 +37,21 @@ class Game extends createjs.Stage {
         this.frameCount = 0;
 
         /**
+         * The amount of time between frames stored for one second, then averaged to get the FPS.
+         */
+        this.timeBetweenFramesCount = 0;
+
+        /**
          * The amount of time since the last framerate update.
          * @type {number}
          */
         this.timeSinceLastFpsCheck = Date.now();
+
+        /**
+         * The amount of time since the last frame.
+         * @type {number}
+         */
+        this.timeSinceLastFrame = Date.now();
 
         /**
          * Whether or not to enable framerate monitor.
@@ -89,15 +100,23 @@ class Game extends createjs.Stage {
     tick() {
         if (this.fpsElement == null) return;
         if (this.monitorFramerate) {
+            const time = Date.now() - this.timeSinceLastFrame;
+            if (time > 18) {
+                console.log("SPIKE @ " + (1000 / (Date.now() - this.timeSinceLastFrame)));
+            }
+            this.timeBetweenFramesCount += Date.now() - this.timeSinceLastFrame;
+            this.timeSinceLastFrame = Date.now();
+
             if (this.fpsElement.style.display == "none") {
                 this.fpsElement.style.display = "block";
             }
             this.frameCount++;
             if (Date.now() - this.timeSinceLastFpsCheck >= 1000) {
                 this.lastAvgFramerate = this.frameCount;
-                this.frameCount = 0;
                 this.timeSinceLastFpsCheck = Date.now();
-                this.fpsElement.innerHTML = "FPS: " + this.lastAvgFramerate;
+                this.fpsElement.innerHTML = "FPS: " + Math.round((1000 / (this.timeBetweenFramesCount / this.frameCount)));
+                this.timeBetweenFramesCount = 0;
+                this.frameCount = 0;
             }
         } else if (this.fpsElement.style.display == "block") {
             this.fpsElement.style.display = "none";
