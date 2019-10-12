@@ -119,12 +119,6 @@ class Player extends createjs.Shape {
         this.fuelDebounce = false;
 
         /**
-         * Used to determine how close the pixel must be before "snapping" into place.
-         * @type {number}
-         */
-        this.pixelRange = this.grid.tileSize / 100;
-
-        /**
          * Used to prevent infinite loops of the positioning system.
          * 0 = right
          * 1 = left
@@ -141,7 +135,7 @@ class Player extends createjs.Shape {
         createjs.Ticker.addEventListener("tick", this.tick.bind(this));
     }
 
-    tick() {
+    tick(event) {
         if (!this.tickEnabled) return;
 
         if (this.moving && this.tile.gY > 7) this.updateFuel(-0.09);
@@ -179,16 +173,13 @@ class Player extends createjs.Shape {
                 this.charge = 0;
             }
 
-            // Handle Speed & PixelRange
+            // Determine Speed
             if (maptile) {
                 this.speed = ((100 - maptile.properties.thickness) / 100) * (this.defaultSpeed * this.speedMultiplier);
             } else if (this.speed != this.defaultSpeed) {
                 this.speed = this.defaultSpeed;
             }
             if (this.speed > this.defaultSpeed) this.speed = this.defaultSpeed;
-            this.pixelRange = (this.grid.tileSize / 100) * this.speedMultiplier;
-
-            console.log("SPEED: " + this.speed);
 
             // Determine Position & Direction
             if ((this.pos.y != this.y || this.pos.x != this.x) && (!maptile || this.charge >= this.chargeReq)) {
@@ -206,11 +197,11 @@ class Player extends createjs.Shape {
             }
 
             if (this.pos.x != this.x) {
-                if (this.movingDirection == 0) this.x += this.speed;
-                if (this.movingDirection == 1) this.x -= this.speed;
+                if (this.movingDirection == 0) this.x += (event.delta / 16.666) * this.speed;
+                if (this.movingDirection == 1) this.x -= (event.delta / 16.666) * this.speed;
             } else if (this.pos.y != this.y) {
-                if (this.movingDirection == 2) this.y += this.speed;
-                if (this.movingDirection == 3) this.y -= this.speed;
+                if (this.movingDirection == 2) this.y += (event.delta / 16.666) * this.speed;
+                if (this.movingDirection == 3) this.y -= (event.delta / 16.666) * this.speed;
             }
 
             if (

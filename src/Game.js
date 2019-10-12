@@ -22,7 +22,7 @@ class Game extends createjs.Stage {
          * Determines how quickly the EaselJS Ticker runs.
          * @type {number}
          */
-        this.framerate = 60;
+        this.framerate = Infinity;
 
         /**
          * The last average framerate.
