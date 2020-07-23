@@ -1,5 +1,5 @@
 const Grid = require("../Grid/Grid.js");
-const Player = require("../Player.js");
+const Player = require("../Player/Player.js");
 const Camera = require("../Camera.js");
 const GameMap = require("../Map/Map.js");
 const FOWHandler = require("./FOWHandler.js");
@@ -50,7 +50,10 @@ class DisplayHandler {
 
     relayer() {
         if (this.map) this.map.bringToFront();
-        if (this.player) this.player.bringToFront();
+        if (this.player) {
+            this.player.bringToFront();
+            this.player.drill.bringToFront();
+        }
         if (this.grid) this.grid.bringOverlayToFront();
     }
 }

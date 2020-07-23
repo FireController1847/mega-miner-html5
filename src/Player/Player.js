@@ -1,27 +1,28 @@
-/** @typedef {import("./Map/MapTile.js")} MapTile */
-const Tile = require("./Grid/Tile.js");
+/** @typedef {import("../Map/MapTile.js")} MapTile */
+const Tile = require("../Grid/Tile.js");
+const PlayerAnim = require("./PlayerAnim.js");
+const Drill = require("./Drill.js");
 
 /**
  * The player -- the object that the player controls.
  */
-class Player extends createjs.Shape {
+class Player extends createjs.Sprite {
     /**
-     * @param {import("./Game.js")} game The game.
-     * @param  {...any} args The arguments for this EaselJS Shape
+     * @param {import("../Game.js")} game The game.
      */
-    constructor(game, ...args) {
-        super(...args);
+    constructor(game) {
+        super();
         this.game = game;
 
         /**
          * A reference to the sprite grid for utility purposes.
-         * @type {import("./Grid/Grid.js")}
+         * @type {import("../Grid/Grid.js")}
          */
         this.grid = this.game.displayHandler.grid;
 
         /**
          * A reference to the map for utility purposes.
-         * @type {import("./Map/Map.js")}
+         * @type {import("../Map/Map.js")}
          */
         this.map = this.game.displayHandler.map;
 
@@ -82,6 +83,13 @@ class Player extends createjs.Shape {
         this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
 
         /**
+         * The grid position of the next block the player is about to mine.
+         * Only updated while mining.
+         * @type {Tile}
+         */
+        this.minetile = null;
+
+        /**
          * How much money the player has.
          * @type {number}
          */
@@ -128,8 +136,32 @@ class Player extends createjs.Shape {
          */
         this.movingDirection = 0;
 
+        /**
+         * Initiate sprite sheet.
+         * @type {createjs.SpriteSheet}
+         */
+        this.spriteSheet = this.game.loadingHandler.sprites.player;
+
+        /**
+         * The current frame position type we have.
+         * @type {string}
+         */
+        this.curDirection = "right";
+
+        /**
+         * Drill! :)
+         * @type {import("./Drill.js")}
+         */
+        this.drill = new Drill(game, this);
+
+        /**
+         * Animation Handler
+         * @type {import("./PlayerAnim.js")}
+         */
+        this.anim = new PlayerAnim(game, this);
+
         // Create the player for temporary testing \\
-        this.graphics.beginFill("blue").drawRect(0, 0, this.grid.tileSize, this.grid.tileSize);
+        this.gotoAndStop("right");
         this.game.addChild(this);
         this.game.update();
         createjs.Ticker.addEventListener("tick", this.tick.bind(this));
@@ -138,6 +170,7 @@ class Player extends createjs.Shape {
     tick(event) {
         if (!this.tickEnabled) return;
 
+        let animate = false;
         if (this.moving && this.tile.gY > 7) this.updateFuel(-0.09);
         if (!this.moving && this.canMove) {
             if (this.fuel <= 0) return this.outOfFuel();
@@ -148,36 +181,51 @@ class Player extends createjs.Shape {
                 this.kpCharge(maptile, () => {
                     if (this.pos.x > 0) this.pos.x -= this.grid.tileSize;
                     if (this.pos.x < this.grid.borders.left) this.x = this.grid.borders.left;
+                    this.curDirection = "left";
+                    this.gotoAndPlay(this.curDirection);
+                    this.drill.updateDirection(this.curDirection);
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
                 maptile = this.map.fg_tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
                 this.kpCharge(maptile, () => {
                     if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
                     if (this.pos.x > (this.grid.borders.right - this.grid.tileSize)) this.pos.x = this.grid.borders.right - this.grid.tileSize;
+                    this.curDirection = "right";
+                    this.gotoAndPlay(this.curDirection);
+                    this.drill.updateDirection(this.curDirection);
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
                 maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
                 this.kpCharge(maptile, () => {
                     if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
                     if (this.pos.y < this.map.horizonLine - this.grid.tileSize) this.pos.y = this.map.horizonLine - this.grid.tileSize;
+                    this.curDirection = "up";
+                    this.gotoAndPlay(this.curDirection);
+                    this.drill.updateDirection(this.curDirection);
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
                 maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
                 this.kpCharge(maptile, () => {
                     if (this.pos.y < (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y += this.grid.tileSize;
                     if (this.pos.y > (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y = this.grid.borders.bottom - this.grid.tileSize;
+                    this.curDirection = "down";
+                    this.gotoAndPlay(this.curDirection);
+                    this.drill.updateDirection(this.curDirection);
                 });
             } else if (this.charge > 0) {
                 this.pos.y = this.y;
                 this.pos.x = this.x;
                 this.charge = 0;
             }
+            animate = true;
 
             // Determine Speed
             if (maptile) {
                 this.speed = ((100 - maptile.properties.thickness) / 100) * (this.defaultSpeed * this.speedMultiplier);
+                this.minetile = maptile;
             } else if (this.speed != this.defaultSpeed) {
                 this.speed = this.defaultSpeed;
+                this.minetile = null;
             }
             if (this.speed > this.defaultSpeed) this.speed = this.defaultSpeed;
 
@@ -200,6 +248,7 @@ class Player extends createjs.Shape {
                 if (this.movingDirection == 0) this.x += (event.delta / 16.666) * this.speed;
                 if (this.movingDirection == 1) this.x -= (event.delta / 16.666) * this.speed;
             } else if (this.pos.y != this.y) {
+ 
                 if (this.movingDirection == 2) this.y += (event.delta / 16.666) * this.speed;
                 if (this.movingDirection == 3) this.y -= (event.delta / 16.666) * this.speed;
             }
@@ -219,11 +268,20 @@ class Player extends createjs.Shape {
                     this.map.tiles.removeChild(maptile);
                     delete this.map.fg_tiles[this.tile.toString()];
                     this.dispatchEvent(new CustomEvent("tiledestroy", { detail: this.tile }));
+                    this.minetile = null;
                 }
                 this.moving = false;
                 this.dispatchEvent(new CustomEvent("tilemove", { detail: this.tile }));
             }
         }
+
+        if (!animate) {
+            animate = this.moving;
+        }
+        if (this.moving && !this.paused) {
+            this.anim.onAnimate(this.minetile);
+        }
+        this.drill.updatePos();
     }
 
     /**
@@ -304,5 +362,18 @@ class Player extends createjs.Shape {
         return this.y + (this.grid.tileSize / 2);
     }
 }
+
+/**
+ * Determines the different frame positions.
+ * Used for fetching the image from the loader.
+ * @readonly
+ * @enum {number}
+ */
+Player.FramePositionType = {
+    DOWN: 0,
+    UP: 4,
+    RIGHT: 8,
+    LEFT: 12
+};
 
 module.exports = Player;

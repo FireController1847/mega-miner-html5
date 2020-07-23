@@ -1,0 +1,30 @@
+{
+    "images": ["assets/drills.png"],
+    "frames": {
+        "width": 53,
+        "height": 53,
+        "count": 80
+    },
+    "animations": {
+        "basic_down": [0, 2],
+        "basic_up": [20, 22],
+        "basic_right": [40, 42],
+        "basic_left":  [60, 62],
+        "saphire_down": [4, 6],
+        "saphire_up": [24, 26],
+        "saphire_right": [44, 46],
+        "saphire_left": [64, 66],
+        "emerald_down": [8, 10],
+        "emerald_up": [28, 30],
+        "emerald_right": [48, 50],
+        "emerald_left": [68, 70],
+        "ruby_down": [12, 14],
+        "ruby_up": [32, 34],
+        "ruby_right": [52, 54],
+        "ruby_left": [72, 74],
+        "diamond_down": [16, 18],
+        "diamond_up": [36, 38],
+        "diamond_right": [56, 58],
+        "diamond_left": [76, 78]
+    }
+}

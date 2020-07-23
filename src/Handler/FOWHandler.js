@@ -22,7 +22,7 @@ class FOWHandler {
 
         /**
          * A reference to the player for utility purposes.
-         * @type {import("../Player.js")}
+         * @type {import("../Player/Player.js")}
          */
         this.player = this.game.displayHandler.player;
 
