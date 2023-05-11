@@ -20,7 +20,7 @@ class LoadingHandler {
          * @type {Object.<string, HTMLImageElement|createjs.SpriteSheet>}
          */
         this.sprites = {
-
+            // ...
         };
     }
 

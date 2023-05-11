@@ -100,10 +100,10 @@ class Game extends createjs.Stage {
     tick() {
         if (this.fpsElement == null) return;
         if (this.monitorFramerate) {
-            const time = Date.now() - this.timeSinceLastFrame;
-            if (time > 18) {
-                console.log("SPIKE @ " + (1000 / (Date.now() - this.timeSinceLastFrame)));
-            }
+            // const time = Date.now() - this.timeSinceLastFrame;
+            // if (time > 18) {
+            //     console.log("SPIKE @ " + (1000 / (Date.now() - this.timeSinceLastFrame)));
+            // }
             this.timeBetweenFramesCount += Date.now() - this.timeSinceLastFrame;
             this.timeSinceLastFrame = Date.now();
 
@@ -114,7 +114,7 @@ class Game extends createjs.Stage {
             if (Date.now() - this.timeSinceLastFpsCheck >= 1000) {
                 this.lastAvgFramerate = this.frameCount;
                 this.timeSinceLastFpsCheck = Date.now();
-                this.fpsElement.innerHTML = "FPS: " + Math.round((1000 / (this.timeBetweenFramesCount / this.frameCount)));
+                this.fpsElement.innerHTML = "FPS: " + Math.round(1000 / (this.timeBetweenFramesCount / this.frameCount));
                 this.timeBetweenFramesCount = 0;
                 this.frameCount = 0;
             }

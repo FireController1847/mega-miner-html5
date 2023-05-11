@@ -1,4 +1,3 @@
-const Drill = require("./Drill.js");
 const MapTile = require("../Map/MapTile.js");
 
 /**
@@ -37,10 +36,23 @@ class PlayerAnim {
         this.drillAnimDelay = 5;
 
         /**
+         * A reference to the boost on the player.
+         * @type {import("./Boost.js")}
+         */
+        this.boost = player.boost;
+
+        /**
+         * Boost Animation Delay
+         * @type {number}
+         */
+        this.boostAnimDelay = 1;
+
+        /**
          * Delays storage values.
          */
         this.playerAnimDelayCur = 0;
         this.drillAnimDelayCur = 0;
+        this.boostAnimDelayCur = 0;
     }
 
     /**
@@ -58,12 +70,17 @@ class PlayerAnim {
         // Drill Animation
         if (maptile && maptile.properties && maptile.properties.type != MapTile.Type.BG_GRASS && this.drillAnimDelayCur > this.drillAnimDelay) {
             this.drillAnimDelayCur = 0;
-
             this.drill.advance();
         }
         this.drillAnimDelayCur++;
-    }
 
+        // Boost Animation
+        if (this.boostAnimDelayCur > this.boostAnimDelay) {
+            this.boostAnimDelayCur = 0;
+            this.boost.advance();
+        }
+        this.boostAnimDelayCur++;
+    }
 }
 
 module.exports = PlayerAnim;

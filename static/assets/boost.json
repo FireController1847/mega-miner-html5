@@ -1,0 +1,14 @@
+{
+    "images": ["assets/boost.png"],
+    "frames": {
+        "width": 20,
+        "height": 20,
+        "count": 16
+    },
+    "animations": {
+        "down": [0, 3],
+        "up": [4, 7],
+        "right": [8, 11],
+        "left": [12, 15]
+    }
+}

@@ -2,6 +2,7 @@
 const Tile = require("../Grid/Tile.js");
 const PlayerAnim = require("./PlayerAnim.js");
 const Drill = require("./Drill.js");
+const PlayerBoost = require("./Boost.js");
 
 /**
  * The player -- the object that the player controls.
@@ -155,6 +156,12 @@ class Player extends createjs.Sprite {
         this.drill = new Drill(game, this);
 
         /**
+         * Boost! :)
+         * @type {import("./Boost.js")}
+         */
+        this.boost = new PlayerBoost(game, this);
+
+        /**
          * Animation Handler
          * @type {import("./PlayerAnim.js")}
          */
@@ -184,6 +191,7 @@ class Player extends createjs.Sprite {
                     this.curDirection = "left";
                     this.gotoAndPlay(this.curDirection);
                     this.drill.updateDirection(this.curDirection);
+                    this.boost.updateDirection(this.curDirection);
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
                 maptile = this.map.fg_tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
@@ -193,6 +201,7 @@ class Player extends createjs.Sprite {
                     this.curDirection = "right";
                     this.gotoAndPlay(this.curDirection);
                     this.drill.updateDirection(this.curDirection);
+                    this.boost.updateDirection(this.curDirection);
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
                 maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
@@ -202,6 +211,7 @@ class Player extends createjs.Sprite {
                     this.curDirection = "up";
                     this.gotoAndPlay(this.curDirection);
                     this.drill.updateDirection(this.curDirection);
+                    this.boost.updateDirection(this.curDirection);
                 });
             } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
                 maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
@@ -211,6 +221,7 @@ class Player extends createjs.Sprite {
                     this.curDirection = "down";
                     this.gotoAndPlay(this.curDirection);
                     this.drill.updateDirection(this.curDirection);
+                    this.boost.updateDirection(this.curDirection);
                 });
             } else if (this.charge > 0) {
                 this.pos.y = this.y;
@@ -248,7 +259,6 @@ class Player extends createjs.Sprite {
                 if (this.movingDirection == 0) this.x += (event.delta / 16.666) * this.speed;
                 if (this.movingDirection == 1) this.x -= (event.delta / 16.666) * this.speed;
             } else if (this.pos.y != this.y) {
- 
                 if (this.movingDirection == 2) this.y += (event.delta / 16.666) * this.speed;
                 if (this.movingDirection == 3) this.y -= (event.delta / 16.666) * this.speed;
             }
@@ -282,6 +292,7 @@ class Player extends createjs.Sprite {
             this.anim.onAnimate(this.minetile);
         }
         this.drill.updatePos();
+        this.boost.updatePos();
     }
 
     /**

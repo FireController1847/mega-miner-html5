@@ -53,6 +53,7 @@ class DisplayHandler {
         if (this.player) {
             this.player.bringToFront();
             this.player.drill.bringToFront();
+            this.player.boost.bringToFront();
         }
         if (this.grid) this.grid.bringOverlayToFront();
     }

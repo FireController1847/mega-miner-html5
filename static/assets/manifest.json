@@ -4,6 +4,7 @@
         { "src": "bgdirt.png",      "id": "bgdirt"          },
         { "src": "tiles.json",      "id": "tiles",          "type": "spritesheet"   },
         { "src": "player.json",     "id": "player",         "type": "spritesheet"   },
-        { "src": "drills.json",     "id": "player_drills",  "type":  "spritesheet"  }
+        { "src": "drills.json",     "id": "player_drills",  "type": "spritesheet"  },
+        { "src": "boost.json",      "id": "player_boost",   "type": "spritesheet"   }
     ]
 }

@@ -40,6 +40,7 @@ class FOWHandler {
 
     init() {
         this.stage.snapToPixelEnabled = true;
+
         /**
          * The actual fog shape for FOW
          * @type {createjs.Shape}
