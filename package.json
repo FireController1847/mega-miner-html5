@@ -9,15 +9,15 @@
         "shim-keyboard-event-key": "1.0.3"
     },
     "devDependencies": {
-        "@babel/core": "^7.10.5",
-        "@babel/preset-env": "^7.10.4",
+        "@babel/core": "^7.21.8",
+        "@babel/preset-env": "^7.21.5",
         "babelify": "^10.0.0",
-        "browserify": "^16.5.1",
-        "eslint": "^5.16.0",
-        "exorcist": "^1.0.1",
-        "reload": "^3.1.0",
+        "browserify": "^17.0.0",
+        "eslint": "^8.40.0",
+        "exorcist": "^2.0.0",
+        "reload": "^3.2.1",
         "uglifyify": "^5.0.2",
-        "watchify": "^3.11.1"
+        "watchify": "^4.0.0"
     },
     "scripts": {
         "build": "browserify src/Game.js --debug | exorcist static/bundle.js.map > static/bundle.min.js -t babelify -t uglifyify",
