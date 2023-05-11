@@ -160,7 +160,7 @@ class Game extends createjs.Stage {
 
 window.onload = function() {
     const pkg = require("../package.json");
-    const rev = fs.readFileSync(".git/refs/heads/master").toString().substring(0, 6).trim();
+    const rev = fs.readFileSync(".git/refs/heads/master").toString().substring(0, 7).trim();
     document.getElementById("version").innerHTML = `Version ${pkg.version}.${rev}`;
     // Create and initiate the game. Wohoo!
     window.game = new Game();
