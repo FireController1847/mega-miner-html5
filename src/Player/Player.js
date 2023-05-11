@@ -76,7 +76,7 @@ class Player extends createjs.Sprite {
          * Determines where the player is about to actually move to.
          * @type {Object.<number, number>}
          */
-        this.pos = { x: this.x, y: this.y };
+        this.targetPos = { x: this.x, y: this.y };
 
         /**
          * The grid position of the player after actual movement.
@@ -102,7 +102,7 @@ class Player extends createjs.Sprite {
          * Creates a sort of "push force" feeling.
          * @type {number}
          */
-        this.chargeReq = 10;
+        this.chargeReq = 5;
 
         /**
          * How many more ticks we're waiting for before it mines.
@@ -134,26 +134,26 @@ class Player extends createjs.Sprite {
         this.fuelDebounce = false;
 
         /**
-         * Used to prevent infinite loops of the positioning system.
-         * 0 = right
-         * 1 = left
-         * 2 = down
-         * 3 = up
-         * @type {number}
-         */
-        this.movingDirection = 0;
-
-        /**
          * Initiate sprite sheet.
          * @type {createjs.SpriteSheet}
          */
         this.spriteSheet = this.game.loadingHandler.sprites.player;
 
         /**
-         * The current frame position type we have.
-         * @type {string}
+         * A map of direction values to direction strings.
+         * Index: 0, 1, 2, 3 matches {@link Direction}
          */
-        this.curDirection = "right";
+        this.dirstrs = ["up", "down", "left", "right"];
+
+        /**
+         * The current direction the player is facing. Notably,
+         * the player may not be fully seated in the next tile
+         * they are moving to when this is updated. This is
+         * updated when a movement is initiated, but may not
+         * contain the direction a player is moving.
+         * @type {Player.Direction}
+         */
+        this.facingDirection = Player.Direction.RIGHT;
 
         /**
          * Drill! :)
@@ -181,6 +181,10 @@ class Player extends createjs.Sprite {
 
         // Create the player for temporary testing \\
         this.gotoAndStop("right");
+        this.drill.updateDirection("right");
+        this.drill.updatePos();
+        this.boost.updateDirection("right");
+        this.boost.updatePos();
         this.game.addChild(this);
         this.game.update();
         createjs.Ticker.addEventListener("tick", this.tick.bind(this));
@@ -189,77 +193,106 @@ class Player extends createjs.Sprite {
     tick(event) {
         if (!this.tickEnabled) return;
 
-        let animate = false;
-        if (!this.moving && this.canMove) {
-            if (this.fuel <= 0) return this.outOfFuel();
-            let maptile = this.map.fg_tiles[this.tile.toString()];
+        // Check for out of fuel
+        if (this.fuel <= 0) {
+            return this.outOfFuel();
+        }
 
-            if (this.game.inputHandler.pressedKeys.indexOf("ArrowLeft") >= 0 || this.game.inputHandler.pressedKeys.indexOf("a") >= 0) {
-                maptile = this.map.fg_tiles[new Tile(this.tile.gX - 1, this.tile.gY).toString()];
-                this.kpCharge(maptile, () => {
-                    if (this.pos.x > 0) this.pos.x -= this.grid.tileSize;
-                    if (this.pos.x < this.grid.borders.left) this.x = this.grid.borders.left;
-                    this.curDirection = "left";
-                    this.gotoAndPlay(this.curDirection);
-                    this.drill.updateDirection(this.curDirection);
-                    this.boost.updateDirection(this.curDirection);
-                });
-            } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowRight") >= 0 || this.game.inputHandler.pressedKeys.indexOf("d") >= 0) {
-                maptile = this.map.fg_tiles[new Tile(this.tile.gX + 1, this.tile.gY).toString()];
-                this.kpCharge(maptile, () => {
-                    if (this.pos.x < (this.grid.borders.right - this.grid.tileSize)) this.pos.x += this.grid.tileSize;
-                    if (this.pos.x > (this.grid.borders.right - this.grid.tileSize)) this.pos.x = this.grid.borders.right - this.grid.tileSize;
-                    this.curDirection = "right";
-                    this.gotoAndPlay(this.curDirection);
-                    this.drill.updateDirection(this.curDirection);
-                    this.boost.updateDirection(this.curDirection);
-                });
-            } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowUp") >= 0 || this.game.inputHandler.pressedKeys.indexOf("w") >= 0) {
-                maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY - 1).toString()];
-                this.kpCharge(maptile, () => {
-                    if (this.pos.y > 0) this.pos.y -= this.grid.tileSize;
-                    if (this.pos.y < this.map.horizonLine - this.grid.tileSize) this.pos.y = this.map.horizonLine - this.grid.tileSize;
-                    this.curDirection = "up";
-                    this.gotoAndPlay(this.curDirection);
-                    this.drill.updateDirection(this.curDirection);
-                    this.boost.updateDirection(this.curDirection);
-                });
-            } else if (this.game.inputHandler.pressedKeys.indexOf("ArrowDown") >= 0 || this.game.inputHandler.pressedKeys.indexOf("s") >= 0) {
-                maptile = this.map.fg_tiles[new Tile(this.tile.gX, this.tile.gY + 1).toString()];
-                this.kpCharge(maptile, () => {
-                    if (this.pos.y < (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y += this.grid.tileSize;
-                    if (this.pos.y > (this.grid.borders.bottom - this.grid.tileSize)) this.pos.y = this.grid.borders.bottom - this.grid.tileSize;
-                    this.curDirection = "down";
-                    this.gotoAndPlay(this.curDirection);
-                    this.drill.updateDirection(this.curDirection);
-                    this.boost.updateDirection(this.curDirection);
-                });
-            } else if (this.charge > 0) {
-                this.pos.y = this.y;
-                this.pos.x = this.x;
-                this.charge = 0;
+        // Get direction movement buttons
+        const direction = this.checkDirection();
+
+        // Slowly decrease charge if no buttons being pressed
+        if (direction == null && this.charge > 0) {
+            this.charge--;
+        }
+
+        // If we're not currently moving, check if we can move
+        // Otherwise, perform the movement
+        if (!this.moving) {
+            if (!this.canMove) return;
+            if (direction == null) return;
+
+            console.log("A");
+
+            // Get maptile
+            let tileGx = this.tile.gX;
+            let tileGy = this.tile.gY;
+            if (direction == Player.Direction.UP) {
+                tileGy -= 1;
+            } else if (direction == Player.Direction.DOWN) {
+                tileGy += 1;
+            } else if (direction == Player.Direction.LEFT) {
+                tileGx -= 1;
+            } else if (direction == Player.Direction.RIGHT) {
+                tileGx += 1;
             }
-            animate = true;
+            const maptile = this.map.fg_tiles[new Tile(tileGx, tileGy).toString()];
 
-            // Determine Speed
-            if (maptile) {
-                this.speed = ((100 - maptile.properties.thickness) / 100) * (this.defaultSpeed * this.speedMultiplier);
-                this.minetile = maptile;
-            } else if (this.speed != this.defaultSpeed) {
-                this.speed = this.defaultSpeed;
-                this.minetile = null;
-            }
-            if (this.speed > this.defaultSpeed) this.speed = this.defaultSpeed;
+            // Charge up and prepare movement
+            this.kpCharge(maptile, () => {
+                // Get target position
+                const tileSize = this.grid.tileSize;
+                if (direction == Player.Direction.UP) {
+                    let targetY = this.targetPos.y - tileSize;
+                    if (targetY < this.map.horizonLine - tileSize) {
+                        targetY = this.map.horizonLine - tileSize;
+                    }
+                    this.targetPos.y = targetY;
+                } else if (direction == Player.Direction.DOWN) {
+                    let targetY = this.targetPos.y + tileSize;
+                    const limit = this.grid.borders.bottom - tileSize;
+                    if (targetY > limit) {
+                        targetY = limit;
+                    }
+                    this.targetPos.y = targetY;
+                } else if (direction == Player.Direction.LEFT) {
+                    let targetX = this.targetPos.x - tileSize;
+                    const limit = this.grid.borders.left;
+                    if (targetX < limit) {
+                        targetX = limit;
+                    }
+                    this.targetPos.x = targetX;
+                } else if (direction == Player.Direction.RIGHT) {
+                    let targetX = this.targetPos.x + tileSize;
+                    const limit = this.grid.borders.right - tileSize;
+                    if (targetX > limit) {
+                        targetX = limit;
+                    }
+                    this.targetPos.x = targetX;
+                }
 
-            // Determine Position & Direction
-            if ((this.pos.y != this.y || this.pos.x != this.x) && (!maptile || this.charge >= this.chargeReq)) {
+                // Check if our trget position is the same as our current position
+                if (this.targetPos.x == this.x && this.targetPos.y == this.y) {
+                    return;
+                }
+
+                // Set us moving to true
                 this.moving = true;
-            }
-            if (this.x < this.pos.x) this.movingDirection = 0;
-            if (this.x > this.pos.x) this.movingDirection = 1;
-            if (this.y < this.pos.y) this.movingDirection = 2;
-            if (this.y > this.pos.y) this.movingDirection = 3;
-        } else {
+
+                // Update direction
+                this.facingDirection = direction;
+                this.gotoAndPlay(this.dirstrs[direction]);
+                this.drill.updateDirection(this.dirstrs[direction]);
+                this.boost.updateDirection(this.dirstrs[direction]);
+
+                // Calculate movement speed and update minetile
+                if (maptile != null) {
+                    this.speed = ((100 - maptile.properties.thickness) / 100) * (this.defaultSpeed * this.speedMultiplier);
+                    this.minetile = maptile;
+                } else if (this.speed != this.defaultSpeed) {
+                    this.speed = this.defaultSpeed;
+                    this.minetile = maptile;
+                }
+            });
+        }
+
+        // This is not an else-if because we want the player to continue moving if they
+        // continue holding the button, and to prevent a "click" into place.
+        if (this.moving) {
+            // Perform animation
+            this.anim.onAnimate(this.minetile);
+
+            // Reduce fuel level
             if (this.fuel <= 0) {
                 this.moving = false;
                 return this.outOfFuel();
@@ -286,23 +319,51 @@ class Player extends createjs.Sprite {
                 }
             }
 
-            if (this.pos.x != this.x) {
-                if (this.movingDirection == 0) this.x += (event.delta / 16.666) * this.speed;
-                if (this.movingDirection == 1) this.x -= (event.delta / 16.666) * this.speed;
-            } else if (this.pos.y != this.y) {
-                if (this.movingDirection == 2) this.y += (event.delta / 16.666) * this.speed;
-                if (this.movingDirection == 3) this.y -= (event.delta / 16.666) * this.speed;
+            // Perform the movement
+            if (this.targetPos.x != this.x || this.targetPos.y != this.y) {
+                const diff = (event.delta / 16.666) * this.speed;
+                if (this.facingDirection == Player.Direction.UP) {
+                    let moveY = this.y - diff;
+                    if (moveY < this.targetPos.y) {
+                        moveY = this.targetPos.y;
+                    }
+                    this.y = moveY;
+                } else if (this.facingDirection == Player.Direction.DOWN) {
+                    let moveY = this.y + diff;
+                    if (moveY > this.targetPos.y) {
+                        moveY = this.targetPos.y;
+                    }
+                    this.y = moveY;
+                } else if (this.facingDirection == Player.Direction.LEFT) {
+                    let moveX = this.x - diff;
+                    if (moveX < this.targetPos.x) {
+                        moveX = this.targetPos.x;
+                    }
+                    this.x = moveX;
+                } else if (this.facingDirection == Player.Direction.RIGHT) {
+                    let moveX = this.x + diff;
+                    if (moveX > this.targetPos.x) {
+                        moveX = this.targetPos.x;
+                    }
+                    this.x = moveX;
+                }
             }
 
+            // Check for movement completion
             if (
-                // Check Left
-                (this.movingDirection == 0 && this.x >= this.pos.x) ||
-                (this.movingDirection == 1 && this.x <= this.pos.x) ||
-                (this.movingDirection == 2 && this.y >= this.pos.y) ||
-                (this.movingDirection == 3 && this.y <= this.pos.y)
+                (this.facingDirection == Player.Direction.UP && this.y <= this.targetPos.y) ||
+                (this.facingDirection == Player.Direction.DOWN && this.y >= this.targetPos.y) ||
+                (this.facingDirection == Player.Direction.LEFT && this.x <= this.targetPos.x) ||
+                (this.facingDirection == Player.Direction.RIGHT && this.x >= this.targetPos.x)
             ) {
-                this.y = this.pos.y;
-                this.x = this.pos.x;
+                // Snap to position, just in case the previous code didn't for some weird obscure reason
+                this.x = this.targetPos.x;
+                this.y = this.targetPos.y;
+
+                // Potentially stop moving since we arrived at our position
+                this.moving = false;
+
+                // Fetch tile and maptile from the position we moved to, and mine the maptile
                 this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
                 const maptile = this.map.fg_tiles[this.tile.toString()];
                 if (maptile) {
@@ -312,19 +373,34 @@ class Player extends createjs.Sprite {
                     this.dispatchEvent(new CustomEvent("tiledestroy", { detail: this.tile }));
                     this.minetile = null;
                 }
-                this.moving = false;
+
+                // Dispatch tilemove
                 this.dispatchEvent(new CustomEvent("tilemove", { detail: this.tile }));
             }
         }
 
-        if (!animate) {
-            animate = this.moving;
-        }
-        if (this.moving && !this.paused) {
-            this.anim.onAnimate(this.minetile);
-        }
+        // Update the player's module positions
         this.drill.updatePos();
         this.boost.updatePos();
+    }
+
+    /**
+     * Checks if a movement key is being pressed.
+     * @returns {Player.Direction} `null` if no key is pressed, otherwise returns the direction accordingly.
+     */
+    checkDirection() {
+        const pressedKeys = this.game.inputHandler.pressedKeys;
+        if (pressedKeys.indexOf("ArrowUp") != -1 || pressedKeys.indexOf("w") != -1) {
+            return Player.Direction.UP;
+        } else if (pressedKeys.indexOf("ArrowDown") != -1 || pressedKeys.indexOf("s") != -1) {
+            return Player.Direction.DOWN;
+        } else if (pressedKeys.indexOf("ArrowLeft") != -1 || pressedKeys.indexOf("a") != -1) {
+            return Player.Direction.LEFT;
+        } else if (pressedKeys.indexOf("ArrowRight") != -1 || pressedKeys.indexOf("d") != -1) {
+            return Player.Direction.RIGHT;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -334,7 +410,7 @@ class Player extends createjs.Sprite {
      * @param {CallableFunction} logic The logic for this keypress.
      */
     kpCharge(maptile, logic) {
-        if (!maptile || this.charge <= 0 || this.charge > this.chargeReq) {
+        if (!maptile || this.charge > this.chargeReq) {
             logic();
         }
         if (this.charge <= this.chargeReq) this.charge++;
@@ -379,7 +455,7 @@ class Player extends createjs.Sprite {
     resetPos() {
         this.x = Math.round((this.grid.widthGU * this.grid.tileSize) / 2);
         this.y = this.map.horizonLine - this.grid.tileSize;
-        this.pos = { x: this.x, y: this.y };
+        this.targetPos = { x: this.x, y: this.y };
     }
 
     /**
@@ -407,16 +483,15 @@ class Player extends createjs.Sprite {
 }
 
 /**
- * Determines the different frame positions.
- * Used for fetching the image from the loader.
+ * Determines the current direction.
  * @readonly
  * @enum {number}
  */
-Player.FramePositionType = {
-    DOWN: 0,
-    UP: 4,
-    RIGHT: 8,
-    LEFT: 12
+Player.Direction = {
+    UP: 0,
+    DOWN: 1,
+    LEFT: 2,
+    RIGHT: 3
 };
 
 module.exports = Player;

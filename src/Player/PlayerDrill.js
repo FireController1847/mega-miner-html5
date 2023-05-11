@@ -64,7 +64,7 @@ class PlayerDrill extends createjs.Sprite {
      */
     updateType(type) {
         this.type = type;
-        this.updateDirection(this.player.curDirection);
+        this.updateDirection(this.player.dirstrs[this.player.facingDirection]);
         this.game.update();
     }
 
