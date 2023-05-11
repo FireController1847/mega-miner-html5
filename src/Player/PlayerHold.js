@@ -41,7 +41,7 @@ class PlayerHold {
     }
 
     updateHold() {
-        document.getElementById("hold").innerHTML = `Hold Count: ${this.mapTiles.length}`;
+        document.getElementById("hold").innerHTML = `Hold: ${this.mapTiles.length} items`;
     }
 }
 

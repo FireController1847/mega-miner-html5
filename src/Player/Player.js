@@ -102,7 +102,7 @@ class Player extends createjs.Sprite {
          * Creates a sort of "push force" feeling.
          * @type {number}
          */
-        this.chargeReq = 5;
+        this.chargeReq = 20;
 
         /**
          * How many more ticks we're waiting for before it mines.
@@ -198,21 +198,18 @@ class Player extends createjs.Sprite {
             return this.outOfFuel();
         }
 
-        // Get direction movement buttons
-        const direction = this.checkDirection();
-
-        // Slowly decrease charge if no buttons being pressed
-        if (direction == null && this.charge > 0) {
-            this.charge--;
-        }
-
         // If we're not currently moving, check if we can move
         // Otherwise, perform the movement
         if (!this.moving) {
+            const direction = this.checkDirection();
             if (!this.canMove) return;
-            if (direction == null) return;
-
-            console.log("A");
+            if (direction == null) {
+                // Reset charge if no buttons being pressed
+                if (this.charge > 0) {
+                    this.charge = 0;
+                }
+                return;
+            }
 
             // Get maptile
             let tileGx = this.tile.gX;
@@ -369,6 +366,7 @@ class Player extends createjs.Sprite {
                 if (maptile) {
                     this.map.tiles.removeChild(maptile);
                     delete this.map.fg_tiles[this.tile.toString()];
+                    this.map.tiles.updateCache();
                     this.hold.addMapTile(maptile);
                     this.dispatchEvent(new CustomEvent("tiledestroy", { detail: this.tile }));
                     this.minetile = null;

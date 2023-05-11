@@ -120,8 +120,12 @@ class GameMap {
             }
         }
 
+        // Relayer and update
         this.game.displayHandler.relayer();
         this.game.update();
+
+        // Cache the map
+        this.tiles.cache(0, 0, this.grid.width, this.grid.height);
     }
 
     /**
