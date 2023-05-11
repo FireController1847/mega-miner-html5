@@ -25,7 +25,7 @@ class PlayerAnim {
 
         /**
          * A reference to the drill on the player.
-         * @type {import("./Drill.js")}
+         * @type {import("./PlayerDrill.js")}
          */
         this.drill = player.drill;
 
@@ -37,7 +37,7 @@ class PlayerAnim {
 
         /**
          * A reference to the boost on the player.
-         * @type {import("./Boost.js")}
+         * @type {import("./PlayerBoost.js")}
          */
         this.boost = player.boost;
 

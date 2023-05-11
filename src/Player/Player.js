@@ -1,8 +1,9 @@
 /** @typedef {import("../Map/MapTile.js")} MapTile */
 const Tile = require("../Grid/Tile.js");
 const PlayerAnim = require("./PlayerAnim.js");
-const Drill = require("./Drill.js");
-const PlayerBoost = require("./Boost.js");
+const PlayerDrill = require("./PlayerDrill.js");
+const PlayerBoost = require("./PlayerBoost.js");
+const PlayerHold = require("./PlayerHold.js");
 
 /**
  * The player -- the object that the player controls.
@@ -113,13 +114,18 @@ class Player extends createjs.Sprite {
          * How many frames this player can be moving without refuling.
          * @type {number}
          */
-        this.maxFuel = 200;
+        this.maxFuel = 150;
+
+        /**
+         * Which upgrade level the fuel tank is at.
+         */
+        this.tank = 0;
 
         /**
          * How much fuel the player has left.
          * @type {number}
          */
-        this.fuel = this.maxFuel;
+        this.fuel = this.maxFuel * (this.tank / 2 + 1);
 
         /**
          * Used to prevent multiple calls when out of fuel.
@@ -151,15 +157,21 @@ class Player extends createjs.Sprite {
 
         /**
          * Drill! :)
-         * @type {import("./Drill.js")}
+         * @type {import("./PlayerDrill.js")}
          */
-        this.drill = new Drill(game, this);
+        this.drill = new PlayerDrill(game, this);
 
         /**
          * Boost! :)
-         * @type {import("./Boost.js")}
+         * @type {import("./PlayerBoost.js")}
          */
         this.boost = new PlayerBoost(game, this);
+
+        /**
+         * Cargo Hold! :)
+         * @type {import("./PlayerHold.js")}
+         */
+        this.hold = new PlayerHold(game, this);
 
         /**
          * Animation Handler
@@ -178,7 +190,6 @@ class Player extends createjs.Sprite {
         if (!this.tickEnabled) return;
 
         let animate = false;
-        if (this.moving && this.tile.gY > 7) this.updateFuel(-0.09);
         if (!this.moving && this.canMove) {
             if (this.fuel <= 0) return this.outOfFuel();
             let maptile = this.map.fg_tiles[this.tile.toString()];
@@ -243,7 +254,6 @@ class Player extends createjs.Sprite {
             // Determine Position & Direction
             if ((this.pos.y != this.y || this.pos.x != this.x) && (!maptile || this.charge >= this.chargeReq)) {
                 this.moving = true;
-                if (this.tile.gY > 7) this.updateFuel(-0.07);
             }
             if (this.x < this.pos.x) this.movingDirection = 0;
             if (this.x > this.pos.x) this.movingDirection = 1;
@@ -253,6 +263,27 @@ class Player extends createjs.Sprite {
             if (this.fuel <= 0) {
                 this.moving = false;
                 return this.outOfFuel();
+            } else if (this.tile.gY > 7) {
+                /**
+                 * To calculate the fuel loss, the original game
+                 * used the arbitrary values of "0.1" when mining
+                 * a tile and "0.07" for movement underground
+                 * without mining. These values, I assume, are
+                 * tied to the framerate (or tickrate) of the
+                 * original game.
+                 *
+                 * The "0.1" allows the player to mine approximately
+                 * 60 tiles in the base game at initial fuel levels.
+                 * To get closest to these arbitrary values, I used
+                 * values "0.062" for mining a tile and, using the
+                 * ratio of 0.062 / 0.1 * 0.07, "0.0434" for moving without
+                 * a tile.
+                 */
+                if (this.minetile) {
+                    this.updateFuel((event.delta / 16.666) * -0.062);
+                } else {
+                    this.updateFuel((event.delta / 16.666) * -0.0434);
+                }
             }
 
             if (this.pos.x != this.x) {
@@ -277,6 +308,7 @@ class Player extends createjs.Sprite {
                 if (maptile) {
                     this.map.tiles.removeChild(maptile);
                     delete this.map.fg_tiles[this.tile.toString()];
+                    this.hold.addMapTile(maptile);
                     this.dispatchEvent(new CustomEvent("tiledestroy", { detail: this.tile }));
                     this.minetile = null;
                 }

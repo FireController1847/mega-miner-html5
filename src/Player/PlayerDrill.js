@@ -1,4 +1,7 @@
-class Drill extends createjs.Sprite {
+/**
+ * The player's drill animation sprite.
+ */
+class PlayerDrill extends createjs.Sprite {
     /**
      * @param {import("../../Game.js")} game
      * @param {import("./Player.js")} player
@@ -23,7 +26,7 @@ class Drill extends createjs.Sprite {
         /**
          * Sets the prefix of this drill.
          */
-        this.type = Drill.Type.BASIC;
+        this.type = PlayerDrill.Type.BASIC;
 
         /**
          * Set Initial Animation Position
@@ -57,7 +60,7 @@ class Drill extends createjs.Sprite {
 
     /**
      * Updates the type of drill.
-     * @param {Drill.Type}
+     * @param {PlayerDrill.Type}
      */
     updateType(type) {
         this.type = type;
@@ -78,7 +81,7 @@ class Drill extends createjs.Sprite {
  * @readonly
  * @enum {string}
  */
-Drill.Type = {
+PlayerDrill.Type = {
     BASIC: "basic",
     SAPHIRE: "saphire",
     EMERALD: "emerald",
@@ -86,4 +89,4 @@ Drill.Type = {
     DIAMOND: "diamond"
 };
 
-module.exports = Drill;
+module.exports = PlayerDrill;
