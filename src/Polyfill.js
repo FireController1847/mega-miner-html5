@@ -16,4 +16,4 @@ module.exports = function() {
 
         window.CustomEvent = CustomEvent;
     })();
-}
+};

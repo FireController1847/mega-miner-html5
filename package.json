@@ -21,6 +21,7 @@
         "watchify": "^4.0.0"
     },
     "scripts": {
+        "lint": "eslint ./src",
         "build": "browserify src/Game.js --debug -t brfs | exorcist static/bundle.js.map > static/bundle.min.js -t babelify -t uglifyify",
         "watch:code": "watchify src/Game.js --debug -t babelify -t uglifyify -t brfs -o \"exorcist static/bundle.js.map > static/bundle.min.js\"",
         "watch:browser": "reload -b -d static/ -s index.html -w static/bundle.min.js"

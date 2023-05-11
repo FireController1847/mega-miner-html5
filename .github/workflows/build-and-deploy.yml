@@ -1,0 +1,81 @@
+name: Build & Deploy
+
+on:
+  push:
+    branches: [ "master" ]
+    paths-ignore:
+      - "README.md"
+      - "LICENCE.md"
+      - ".gitignore"
+  
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x]
+    
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Lint
+      run: |
+        npm install
+        npm run lint
+
+    - name: Build
+      run: |
+        npm run build
+    
+    - name: Upload artifact
+      uses: actions/upload-artifact@master
+      with:
+        name: build-artifact
+        path: ./static
+  deploy:
+    needs: [build]
+  
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+      
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+        
+      - name: Download build
+        uses: actions/download-artifact@master
+        with:
+          name: build-artifact
+          path: ./static
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: './static'
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1

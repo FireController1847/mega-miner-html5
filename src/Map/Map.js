@@ -133,8 +133,9 @@ class GameMap {
      * Includes chance values, so < 7.5 is the same as 7.5%
      * @param {string} type
      * @param {number} layer
-     * @param {Tile} tile 
+     * @param {Tile} tile
      */
+    // eslint-disable-next-line no-unused-vars
     shouldGenType(type, layer, tile) {
         switch (type) {
             case "coal": {
@@ -171,6 +172,7 @@ class GameMap {
         this.seed = 0;
 
         this.bg_tiles.forEach(i => {
+            // eslint-disable-next-line no-prototype-builtins
             if (i.hasOwnProperty("removeAllChildren")) i.removeAllChildren();
             this.game.removeChild(i);
         });
