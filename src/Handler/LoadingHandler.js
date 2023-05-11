@@ -10,12 +10,6 @@ class LoadingHandler {
         this.game = game;
 
         /**
-         * The path to the manifest.
-         * @type {string}
-         */
-        this.manifest = "assets/manifest.json";
-
-        /**
          * Contains a list of all the sprites used in the game indexed by their asset id.
          * @type {Object.<string, HTMLImageElement|createjs.SpriteSheet>}
          */
@@ -37,7 +31,7 @@ class LoadingHandler {
         });
         this.loader.on("complete", callback);
 
-        this.loader.loadManifest({ src: this.manifest, type: "manifest" });
+        this.loader.loadManifest({ src: "assets/manifest.json", type: "manifest" });
     }
 }
 

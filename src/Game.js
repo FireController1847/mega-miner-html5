@@ -2,6 +2,8 @@
 const InputHandler = require("./Handler/InputHandler.js");
 const DisplayHandler = require("./Handler/DisplayHandler.js");
 const LoadingHandler = require("./Handler/LoadingHandler.js");
+// BRFS
+const fs = require("fs");
 // Polyfills
 require("./Polyfill.js")();
 
@@ -158,7 +160,8 @@ class Game extends createjs.Stage {
 
 window.onload = function() {
     const pkg = require("../package.json");
-    document.getElementById("version").innerHTML = `Version ${pkg.version}`;
+    const rev = fs.readFileSync(".git/refs/heads/master").toString().substring(0, 6).trim();
+    document.getElementById("version").innerHTML = `Version ${pkg.version}.${rev}`;
     // Create and initiate the game. Wohoo!
     window.game = new Game();
     window.game.fpsElement = document.getElementById("fps");

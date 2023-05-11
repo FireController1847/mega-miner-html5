@@ -1,6 +1,6 @@
 {
     "name": "mega-miner-html5",
-    "version": "1.0.0-alpha.1",
+    "version": "1.0.0-alpha",
     "author": "FireController#1847",
     "dependencies": {
         "easeljs": "1.0.2",
@@ -12,6 +12,7 @@
         "@babel/core": "^7.21.8",
         "@babel/preset-env": "^7.21.5",
         "babelify": "^10.0.0",
+        "brfs": "^2.0.2",
         "browserify": "^17.0.0",
         "eslint": "^8.40.0",
         "exorcist": "^2.0.0",
@@ -20,8 +21,8 @@
         "watchify": "^4.0.0"
     },
     "scripts": {
-        "build": "browserify src/Game.js --debug | exorcist static/bundle.js.map > static/bundle.min.js -t babelify -t uglifyify",
-        "watch:code": "watchify src/Game.js --debug -t babelify -t uglifyify -o \"exorcist static/bundle.js.map > static/bundle.min.js\"",
+        "build": "browserify src/Game.js --debug -t brfs | exorcist static/bundle.js.map > static/bundle.min.js -t babelify -t uglifyify",
+        "watch:code": "watchify src/Game.js --debug -t babelify -t uglifyify -t brfs -o \"exorcist static/bundle.js.map > static/bundle.min.js\"",
         "watch:browser": "reload -b -d static/ -s index.html -w static/bundle.min.js"
     }
 }
