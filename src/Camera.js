@@ -82,8 +82,8 @@ class Camera {
             }
         }
 
-        if (this.game.y != -this.viewport.top) this.game.y = -this.viewport.top;
-        if (this.game.x != -this.viewport.left) this.game.x = -this.viewport.left;
+        if (this.game.y != -this.viewport.top) this.game.y = this.game.lerp(this.game.y, -this.viewport.top, 0.1);
+        if (this.game.x != -this.viewport.left) this.game.x = this.game.lerp(this.game.x, -this.viewport.left, 0.1);
     }
 
     /**

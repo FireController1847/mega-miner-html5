@@ -64,8 +64,9 @@ MapTile.Type = {
  * Contains information about the tile such as thickness, value, and more.
  * @typedef {Object} MapTileProperties
  * @property {MapTile.Type} type The type of tile this is.
- * @property {number} tickness Determines the speed at which the player moves in this tile (in pixels per frame).
+ * @property {number} thickness A percentage of the default player movement speed. See {@link Player#defaultSpeed}.
  * @property {number} value The value of this tile.
+ * @see Player#defaultSpeed
  */
 
 module.exports = MapTile;

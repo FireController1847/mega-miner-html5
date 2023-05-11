@@ -30,17 +30,34 @@ class Player extends createjs.Sprite {
 
         /**
          * The speed at which the player will move at by default.
+         * Calculated by pixels per millisecond.
+         *
+         * Timed off of original game. It takes approx. 900 ms
+         * per 4 tiles. That's 225 ms per tile. At 50 pixels
+         * per tile, we do 50 pixels / 225 ms to give us
+         * 0.222 pixels per millisecond.
+         *
+         * Mining tiles is fairly consistent, but thickness
+         * is provided as a method of changing the speed
+         * going through. It takes 3400 ms to mine 4 tiles.
+         * That's 850 ms per tile. At 50 pixels per tile,
+         * we do 50 pixels / 850 ms to give us ~0.0588
+         * pixels per millisecond.
+         *
+         * We can get this value by doing ~26.5% of 0.222
+         * which gives us ~0.0588. Most tiles will use 26.5
+         * as their set thickness.
+         *
          * @type {number}
          */
-        this.defaultSpeed = 5;
+        this.defaultSpeed = 0.222;
 
         /**
          * The speed at which this player will move at.
-         * Currently calculated by pixels per frame.
-         * TODO: Make a real life value other than pixels per frame.
+         * Calculated by pixels per millisecond.
          * @type {number}
          */
-        this.speed = 5;
+        this.speed = this.defaultSpeed;
 
         /**
          * How much to muliply the player's speed.
@@ -79,11 +96,6 @@ class Player extends createjs.Sprite {
          * continuous movement rollover.
          */
         this.isStopping = false;
-
-        /**
-         * Set the initial position for the player.
-         */
-        this.resetPos();
 
         /**
          * The pixel position of the player before actual movement.
@@ -125,10 +137,10 @@ class Player extends createjs.Sprite {
         this.charge = 0;
 
         /**
-         * How many frames this player can be moving without refuling.
+         * How many litres this tank holds.
          * @type {number}
          */
-        this.maxFuel = 150;
+        this.maxFuel = 10;
 
         /**
          * Which upgrade level the fuel tank is at.
@@ -193,12 +205,12 @@ class Player extends createjs.Sprite {
          */
         this.anim = new PlayerAnim(game, this);
 
-        // Create the player for temporary testing \\
-        this.gotoAndStop("right");
-        this.drill.updateDirection("right");
-        this.drill.updatePos();
-        this.boost.updateDirection("right");
-        this.boost.updatePos();
+        /**
+         * Set the initial position for the player.
+         */
+        this.resetPos();
+
+        // Add player to game and bind tick event
         this.game.addChild(this);
         this.game.update();
         createjs.Ticker.addEventListener("tick", this.tick.bind(this));
@@ -230,6 +242,12 @@ class Player extends createjs.Sprite {
                     tileGx += 1;
                 }
                 const maptile = this.map.fg_tiles[new Tile(tileGx, tileGy).toString()];
+
+                // Update direction
+                this.facingDirection = direction;
+                this.gotoAndPlay(this.dirstrs[direction]);
+                this.drill.updateDirection(this.dirstrs[direction]);
+                this.boost.updateDirection(this.dirstrs[direction]);
 
                 // Charge up and prepare movement
                 this.kpCharge(maptile, () => {
@@ -273,15 +291,9 @@ class Player extends createjs.Sprite {
                     this.moving = true;
                     this.isStopping = false;
 
-                    // Update direction
-                    this.facingDirection = direction;
-                    this.gotoAndPlay(this.dirstrs[direction]);
-                    this.drill.updateDirection(this.dirstrs[direction]);
-                    this.boost.updateDirection(this.dirstrs[direction]);
-
                     // Calculate movement speed and update minetile
                     if (maptile != null) {
-                        this.speed = ((100 - maptile.properties.thickness) / 100) * (this.defaultSpeed * this.speedMultiplier);
+                        this.speed = (maptile.properties.thickness / 100) * (this.defaultSpeed * this.speedMultiplier);
                         this.minetile = maptile;
                     } else if (this.speed != this.defaultSpeed) {
                         this.speed = this.defaultSpeed;
@@ -311,7 +323,6 @@ class Player extends createjs.Sprite {
 
             // Reduce fuel level
             if (this.fuel <= 0) {
-                this.moving = false;
                 return this.outOfFuel();
             } else if (this.tile.gY > 7) {
                 /**
@@ -322,23 +333,27 @@ class Player extends createjs.Sprite {
                  * tied to the framerate (or tickrate) of the
                  * original game.
                  *
-                 * The "0.1" allows the player to mine approximately
-                 * 60 tiles in the base game at initial fuel levels.
-                 * To get closest to these arbitrary values, I used
-                 * values "0.062" for mining a tile and, using the
-                 * ratio of 0.062 / 0.1 * 0.07, "0.0434" for moving without
-                 * a tile.
+                 * To calculate the fuel loss, the original game
+                 * used arbitrary values. I measured that you can
+                 * go 60 tiles with your base-game tank. I am going
+                 * to assign the base-game tank as "10" litres.
+                 * It takes 51000 ms to mine 60 tiles. So, it takes
+                 * 1/5100 liters per millisecond.
+                 *
+                 * It takes approximately 70000 ms to use 10 litres
+                 * without mining, which would be 1/7000 litres per
+                 * millisecond.
                  */
                 if (this.minetile) {
-                    this.updateFuel((event.delta / 16.666) * -0.062);
+                    this.updateFuel(-(1 / 5100) * event.delta);
                 } else {
-                    this.updateFuel((event.delta / 16.666) * -0.0434);
+                    this.updateFuel(-(1 / 7000) * event.delta);
                 }
             }
 
             // Perform the movement
             if (this.targetPos.x != this.x || this.targetPos.y != this.y) {
-                const diff = (event.delta / 16.666) * this.speed;
+                const diff = this.speed * event.delta;
                 if (this.facingDirection == Player.Direction.UP) {
                     let moveY = this.y - diff;
                     if (moveY < this.targetPos.y) {
@@ -365,6 +380,11 @@ class Player extends createjs.Sprite {
                     this.x = moveX;
                 }
             }
+
+            // TEMPORARY HTML UPDATING //
+            const depth = Math.round(((this.y / this.grid.tileSize) - 7) * 5);
+            document.getElementById("depth").innerHTML = "Depth: " + depth + " meters";
+            // END TEMPORARY HTML UPDATING
 
             // Check for movement completion
             if (
@@ -445,7 +465,7 @@ class Player extends createjs.Sprite {
      */
     updateFuel(amount) {
         this.fuel += amount;
-        document.getElementById("fuel").innerHTML = `Fuel Left: ${Math.max(Math.ceil((this.fuel / this.maxFuel) * 10000) / 100, 0)}%`;
+        document.getElementById("fuel").innerHTML = `Fuel Left: ${Math.max(Math.ceil((this.fuel / this.maxFuel) * 10000) / 100, 0).toFixed(2)}%`;
     }
 
     /**
@@ -455,15 +475,25 @@ class Player extends createjs.Sprite {
         if (this.fuelDebounce) return;
         this.fuelDebounce = true;
         this.canMove = false;
+        this.moving = false;
         console.warn("PLAYER OUT OF FUEL, RECHARGING!");
+
+        // Fade out
         this.game.displayHandler.fade(true, () => {
-            const depth = this.tile.gY - 3;
-            const depthInMeters = depth * Math.round(depth / this.grid.metersPerTile);
+            // Move player and reset statistics
+            const depth = Math.round(((this.y / this.grid.tileSize) - 7) * 5);
             this.fuel = this.maxFuel;
             this.updateFuel(0);
-            this.money -= depthInMeters + this.maxFuel;
+            this.money -= depth + this.maxFuel;
+            // TEMPORARY HTML UPDATING //
+            document.getElementById("depth").innerHTML = "Depth: " + depth + " meters";
+            document.getElementById("money").innerHTML = "Money: $" + this.money;
+            // END TEMPORARY HTML UPDATING
             this.resetPos();
+
+            // Delay for dramatic effect
             setTimeout(() => {
+                // Fade in
                 this.game.displayHandler.fade(false, () => {
                     console.log("FUEL RECHARGE COMPLETE");
                     this.fuelDebounce = false;
@@ -479,7 +509,21 @@ class Player extends createjs.Sprite {
     resetPos() {
         this.x = Math.round((this.grid.widthGU * this.grid.tileSize) / 2);
         this.y = this.map.horizonLine - this.grid.tileSize;
+        this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
         this.targetPos = { x: this.x, y: this.y };
+        const direction = Player.Direction.RIGHT;
+        this.facingDirection = direction;
+        this.gotoAndPlay(this.dirstrs[direction]);
+        this.wasMoving = false;
+        this.isStopping = false;
+        if (this.drill) {
+            this.drill.updateDirection(this.dirstrs[direction]);
+            this.drill.updatePos();
+        }
+        if (this.boost) {
+            this.boost.updateDirection(this.dirstrs[direction]);
+            this.boost.updatePos();
+        }
     }
 
     /**

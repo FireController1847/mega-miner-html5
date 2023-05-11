@@ -136,6 +136,16 @@ class Game extends createjs.Stage {
     }
 
     /**
+     * Linter interpolation
+     * @param {number} start
+     * @param {number} end
+     * @param {number} amount
+     */
+    lerp(start, end, amount) {
+        return (1 - amount) * start + amount * end;
+    }
+
+    /**
      * Checks the HTML every second to determine if it's been modified.
      * Used to prevent delition of the fow or canvas by casual methods.
      */
