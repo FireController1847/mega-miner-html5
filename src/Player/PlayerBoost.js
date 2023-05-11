@@ -45,8 +45,8 @@ class PlayerBoost extends createjs.Sprite {
      * Updates the position of the boost.
      */
     updatePos() {
-        if (this.visible != this.player.moving) {
-            this.visible = this.player.moving;
+        if (this.visible != this.player.moving || this.visible != this.player.wasMoving) {
+            this.visible = this.player.moving || this.player.wasMoving;
         }
 
         let boostX;
