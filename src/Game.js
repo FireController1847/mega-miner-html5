@@ -94,6 +94,7 @@ class Game extends createjs.Stage {
         this.checkHTML();
         this.resize();
         this.canvas.getContext("2d").imageSmoothingEnabled = false;
+        this.canvas.getContext("2d").textRendering = "optimizeSpeed";
     }
 
     /**

@@ -77,6 +77,7 @@ class PlayerBoost extends createjs.Sprite {
     updateDirection(direction) {
         this.direction = direction;
         this.gotoAndPlay(direction);
+        this.updatePos();
     }
 
     /**

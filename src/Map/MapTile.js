@@ -63,6 +63,8 @@ MapTile.Type = {
 /**
  * Contains information about the tile such as thickness, value, and more.
  * @typedef {Object} MapTileProperties
+ * @property {string} name The name of this tile.
+ * @property {string} color The 'theme' color of this tile.
  * @property {MapTile.Type} type The type of tile this is.
  * @property {number} thickness A percentage of the default player movement speed. See {@link Player#defaultSpeed}.
  * @property {number} value The value of this tile.

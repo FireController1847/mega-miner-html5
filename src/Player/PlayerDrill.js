@@ -56,6 +56,7 @@ class PlayerDrill extends createjs.Sprite {
      */
     updateDirection(direction) {
         this.gotoAndPlay(this.type + "_" + direction);
+        this.updatePos();
     }
 
     /**

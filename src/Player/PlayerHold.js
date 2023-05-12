@@ -32,11 +32,20 @@ class PlayerHold {
         if (this.mapTiles.length >= this.capacity) {
             return false;
         }
+
+        // Add the appropriate type to the hold
         switch (maptile.properties.type) {
             case MapTile.Type.COAL:
                 this.mapTiles.push(maptile.properties);
                 this.updateHold();
+                break;
+            default:
+                return true;
         }
+
+        // Put text upon collection
+        this.game.displayHandler.addFloatingText("+1 " + maptile.properties.name.toUpperCase(), maptile.properties.color, maptile.x + this.game.displayHandler.map.grid.tileSize / 2, maptile.y);
+
         return true;
     }
 

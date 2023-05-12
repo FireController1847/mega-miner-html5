@@ -7,6 +7,8 @@ class Grass extends MapTile {
 
         /** @type {MapTileProperties} */
         this.properties = {
+            name: "Grass",
+            color: "#000",
             type: MapTile.Type.GRASS,
             thickness: 26.5,
             value: 0

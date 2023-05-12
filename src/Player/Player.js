@@ -324,7 +324,7 @@ class Player extends createjs.Sprite {
             // Reduce fuel level
             if (this.fuel <= 0) {
                 return this.outOfFuel();
-            } else if (this.tile.gY > 7) {
+            } else if (this.y > this.map.horizonLine - this.map.grid.tileSize + 5) {
                 /**
                  * To calculate the fuel loss, the original game
                  * used the arbitrary values of "0.1" when mining
@@ -405,10 +405,10 @@ class Player extends createjs.Sprite {
                 this.tile = this.grid.getTilePositionFromPixelPosition(this.x, this.y);
                 const maptile = this.map.fg_tiles[this.tile.toString()];
                 if (maptile) {
+                    this.hold.addMapTile(maptile);
                     this.map.tiles.removeChild(maptile);
                     delete this.map.fg_tiles[this.tile.toString()];
                     this.map.tiles.updateCache();
-                    this.hold.addMapTile(maptile);
                     this.dispatchEvent(new CustomEvent("tiledestroy", { detail: this.tile }));
                     this.minetile = null;
                 }
@@ -499,7 +499,7 @@ class Player extends createjs.Sprite {
                     this.fuelDebounce = false;
                     this.canMove = true;
                 });
-            }, 2000);
+            }, 1000);
         });
     }
 
